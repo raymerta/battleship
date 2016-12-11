@@ -8,6 +8,18 @@ Yes, it is. A web service is a specific implementation of RPC. At its lowest lev
 
 http://stackoverflow.com/questions/3028899/what-is-the-difference-between-remote-procedure-call-and-web-service
 
+# How to run the game? 
+
+- open terminal
+- run 'python server.py'
+- open Chrome browser, type 'http://localhost:10001/' 
+
+Notes: 
+
+- ensure internet is connected to load assets (images, fonts, style, etc)
+- prefer use Chrome browser for all players 
+
+
 # Development Strategy
 
 We are copying server part from the first homework
@@ -15,10 +27,16 @@ We are copying server part from the first homework
 # Testing
 - ensure testing crossbrowser connectivity
 
-# TO DOS: 
+# TO DO: 
+
+## important
 
 - reject similar name in same server
 - handle URL hijacking
+
+## nice to have 
+
+- dynamic server name from server
 
 # Requirements
 - User starts the application, and can select what game server to join
