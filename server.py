@@ -5,8 +5,9 @@ import sys
 import random
 import time
 
-
 serverAddress = ('localhost', 10001)
+
+from PDU import PDU
 
 # setting up response header
 responseHeaders = {}
@@ -15,16 +16,6 @@ responseHeaders[200] =\
 """HTTP/1.0 200 OK
 Server: ws30
 Content-type: %s
-Set-Cookie: %s
-
-%s
-"""
-
-responseHeaders[301] =\
-"""HTTP/1.0 301 Move
-Server: ws30
-Content-type: %s
-Location: %s
 
 %s
 """
@@ -33,7 +24,6 @@ responseHeaders[404] =\
 """HTTP/1.0 404 Not Found
 Server: ws30
 Content-type: %s
-Set-Cookie: %s
 
 %s
 """
@@ -66,7 +56,7 @@ def socketServer(serverAddress):
     return sock
 
 # handling routing TODO
-def routingHandler(pduResult, session, conn, addr):
+def routingHandler(pduResult, conn, addr):
 
 	# remove beginning /
 	addr = pduResult.uri.split('/')
@@ -74,9 +64,6 @@ def routingHandler(pduResult, session, conn, addr):
 	content = ''
 	fsource = ''
 	component = ''
-
-	#not working for god sake
-	cookie = setCookie("__session", session)
 	mime = 'text/html'
 
 
@@ -90,7 +77,17 @@ def routingHandler(pduResult, session, conn, addr):
 		content = f.read()
 		f.close()
 
-		component = (200, content, mime, cookie)
+		component = (200, content, mime)
+		sendResponse(conn, component)
+
+	elif (addr[1] == 'server'):
+		fsource = 'user.html'
+		f = open(fsource, 'r')
+		mime = getMime(fsource)
+		content = f.read()
+		f.close()
+
+		component = (200, content, mime)
 		sendResponse(conn, component)
 
 	else:
@@ -99,16 +96,15 @@ def routingHandler(pduResult, session, conn, addr):
 		mime = getMime(fsource)
 		content = f.read()
 		f.close()
-		component = (404, content, mime, cookie)
+		component = (404, content, mime)
 		sendResponse(conn, component)
 
 # handling response, combining content
 def sendResponse(conn, component):
 	template = responseHeaders[component[0]]
+	data = template % (component[2], component[1])
 
-	data = template % (component[2], component[3], component[1])
-	#print >> sys.stderr, 'send response data :'
-	#print >> sys.stderr, data
+	print >> sys.stderr, data
 
 	conn.sendall(data)
 
@@ -130,20 +126,8 @@ def parseRequest(conn):
 
 	return PDU(data)
 
-def setCookie(name, content):
-	# sample: Set-Cookie: id=a3fWa; Expires=Wed, 21 Oct 2015 07:28:00 GMT; Secure; HttpOnly
-	expiresYear = int(time.strftime("%Y")) + 10
-	expiresMonth = time.strftime("%a, %d %b")
-	expiresTime = time.strftime("%X")
+def handler(conn, addr):
 
-	cookie = "%s=%s; Expires=%s %s %s GMT; Secure; HttpOnly" % (name, content, expiresMonth, expiresYear, expiresTime)
-	#print >> sys.stderr, 'Cookie content : %s' % cookie
-
-	return cookie
-
-def handler(conn, addr, session):
-
-	#print >> sys.stderr, 'Session : %s' % session
 
 	# parsing uri request
 	pduResult = parseRequest(conn)
@@ -151,7 +135,7 @@ def handler(conn, addr, session):
 	#print >> sys.stderr, 'URI accessed : %s' % pduResult.uri
 
 	# handling URI and print suitable pages
-	routingHandler(pduResult, session, conn, addr)
+	routingHandler(pduResult, conn, addr)
 
 	conn.close()
 
@@ -173,7 +157,7 @@ def main():
 			print >> sys.stderr, 'client connected with ip :  %s' % str(addr)
 
 			#start threading
-			thrd = threading.Thread(target=handler, args=(conn, addr, session))
+			thrd = threading.Thread(target=handler, args=(conn, addr))
 
 			try:
 				thrd.start()

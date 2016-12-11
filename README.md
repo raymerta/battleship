@@ -15,6 +15,11 @@ We are copying server part from the first homework
 # Testing
 - ensure testing crossbrowser connectivity
 
+# TO DOS: 
+
+- reject similar name in same server
+- handle URL hijacking
+
 # Requirements
 - User starts the application, and can select what game server to join
   – The list of game servers is collected automatically by a client application (listening to server announces)
