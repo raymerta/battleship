@@ -31,12 +31,20 @@ We are copying server part from the first homework
 
 ## important
 
+- send user name to server
 - reject similar name in same server
+- specify map size in new game 
+- get list of player
+- notification for game starting
+- notification for player joining
+- notification for player turn
 - handle URL hijacking
 
 ## nice to have 
 
-- dynamic server name from server
+- [index] dynamic server name from server
+- [session] dynamic game session name
+
 
 # Requirements
 - User starts the application, and can select what game server to join

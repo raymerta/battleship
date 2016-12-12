@@ -31,7 +31,7 @@ footer, header, hgroup, menu, nav, section {
 body {
 	line-height: 1;
 	font-family: 'Roboto Slab', serif;
-	background: #132937;
+	background: url("http://parallemon.com/battleship/sea.png") repeat;
 }
 
 a {
@@ -71,11 +71,9 @@ table {
 }
 
 .seabackground {
-	min-height: 168px;
-	background: url("http://parallemon.com/battleship/sea.png") repeat;
 	text-align: center;
 	color: white;
-	padding: 30px;
+	padding-top: 30px;
 }
 
 .seabackground h1 {
@@ -84,13 +82,65 @@ table {
 	margin-bottom: 30px;
 }
 
+.notification {
+	background: #29bda3;
+	padding: 20px;
+	font-size: 20px;
+}
+
+.ship {
+	float: left;
+	background: white;
+	padding: 15px 50px;
+	-webkit-border-radius: 50px;
+	border-radius: 50px;
+	margin: 0px 5px 10px 5px;
+}
+
+.ship.battleship {
+	background: #f8b823;
+}
+
+.ship.cruiser {
+	background: #ff842f;
+}
+
+.ship.destroyer {
+	background: #ff6c54;
+}
+
+.ship.submarine {
+	background: #26d2b5;
+}
+
 .gamecontainer {
 	width: 960px;
 	margin: 0 auto 0 auto;
 }
 
+input.gametext {
+	padding: 20px;
+    font-size: 20px;
+    font-family: 'Roboto Slab', serif;
+    border: solid 1px #dcdcdc;
+    transition: box-shadow 0.3s, border 0.3s;
+    color: #132937;
+    text-align: center;
+    width: 503px;
+    -webkit-border-radius: 50px;
+    border-radius: 50px;
+}
+
 a:hover .gamebutton{
 	color: #132937;
+}
+
+.seablock {
+	width: 50px; 
+	height: 50px; 
+	background: url("http://parallemon.com/battleship/seablock.png");
+	margin: 2px; 
+	float: left;
 }
 
 .gamebutton {

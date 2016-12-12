@@ -10,6 +10,9 @@ serverAddress = ('localhost', 10001)
 from PDU import PDU
 
 # setting up response header
+
+serverList = {}
+
 responseHeaders = {}
 
 responseHeaders[200] =\
@@ -82,6 +85,26 @@ def routingHandler(pduResult, conn, addr):
 
 	elif (addr[1] == 'server'):
 		fsource = 'user.html'
+		f = open(fsource, 'r')
+		mime = getMime(fsource)
+		content = f.read()
+		f.close()
+
+		component = (200, content, mime)
+		sendResponse(conn, component)
+
+	elif (addr[1] == 'session'):
+		fsource = 'session.html'
+		f = open(fsource, 'r')
+		mime = getMime(fsource)
+		content = f.read()
+		f.close()
+
+		component = (200, content, mime)
+		sendResponse(conn, component)
+
+	elif (addr[1] == 'game'):
+		fsource = 'game.html'
 		f = open(fsource, 'r')
 		mime = getMime(fsource)
 		content = f.read()

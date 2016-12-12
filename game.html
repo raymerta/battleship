@@ -1,9 +1,53 @@
 <html>
 	<head>
 		<title>BATTLESHIP</title>
+		<link rel="stylesheet" type="text/css" href="http://parallemon.com/battleship/battleshipstyle.css">
+		<!-- <link rel="stylesheet" type="text/css" href="battleshipstyle.css"> -->
+		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab:100,300,400,700" rel="stylesheet">
 	</head>
+
 	<body>
-		<div style="width: 50px; height: 50px; background: blue; margin: 2px; float: left;"></div>
-		<div style="width: 50px; height: 50px; background: blue; margin: 2px; float: left;"></div>
+
+		<div class="skybackground">
+			<img src="http://parallemon.com/battleship/title.png">
+		</div>
+		<div class="notification">
+			<div class="gamecontainer">you are in editing mode</div>
+		</div>
+		<div class="seabackground">
+			<div class="gamecontainer">
+				
+				<h1>Baltic Sea 1</h1>
+
+				<div class="ship battleship">Battleship (1)</div> 
+				<div class="ship cruiser">Cruiser (2)</div>
+				<div class="ship destroyer">Destroyer (3)</div>
+				<div class="ship submarine">Submarine (4)</div>
+
+				<div class="clearfix"></div>
+			</div>
+		</div>
+
+		<div id="map"></div>
+
+		<div class="clearfix"></div>
+
+		
+		<a href="#"><div class="gamebutton">Start Game</div></a>
+
+		<script type="text/javascript">
+			document.getElementById("map").style.width = (20 * 54) + "px";
+			document.getElementById("map").style.margin = "0 auto 20px auto";
+
+			var mapBlock = "";
+			var blockSize = 20 * 20;
+
+			for (var i = 0; i < blockSize; i++) {
+				mapBlock = mapBlock + "<div class=\"seablock\"></div>";
+			}
+
+			document.getElementById("map").innerHTML = mapBlock;
+		</script>
+
 	</body>
 </html>
