@@ -95,22 +95,27 @@ table {
 	-webkit-border-radius: 50px;
 	border-radius: 50px;
 	margin: 0px 5px 10px 5px;
+	cursor: pointer;
 }
 
 .ship.battleship {
 	background: #f8b823;
+	border: 3px solid #f8b823;
 }
 
 .ship.cruiser {
 	background: #ff842f;
+	border: 3px solid #ff842f;
 }
 
 .ship.destroyer {
 	background: #ff6c54;
+	border: 3px solid #ff6c54;
 }
 
 .ship.submarine {
 	background: #26d2b5;
+	border: 3px solid #26d2b5;
 }
 
 .gamecontainer {
@@ -141,6 +146,7 @@ a:hover .gamebutton{
 	background: url("http://parallemon.com/battleship/seablock.png");
 	margin: 2px; 
 	float: left;
+	cursor: pointer;
 }
 
 .gamebutton {

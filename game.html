@@ -1,8 +1,8 @@
 <html>
 	<head>
 		<title>BATTLESHIP</title>
-		<link rel="stylesheet" type="text/css" href="http://parallemon.com/battleship/battleshipstyle.css">
-		<!-- <link rel="stylesheet" type="text/css" href="battleshipstyle.css"> -->
+		<!-- <link rel="stylesheet" type="text/css" href="http://parallemon.com/battleship/battleshipstyle.css"> -->
+		<link rel="stylesheet" type="text/css" href="battleshipstyle.css">
 		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab:100,300,400,700" rel="stylesheet">
 	</head>
 
@@ -19,10 +19,10 @@
 				
 				<h1>Baltic Sea 1</h1>
 
-				<div class="ship battleship">Battleship (1)</div> 
-				<div class="ship cruiser">Cruiser (2)</div>
-				<div class="ship destroyer">Destroyer (3)</div>
-				<div class="ship submarine">Submarine (4)</div>
+				<div class="ship battleship" id="battleship" onclick="selectShip('battleship')">Battleship (1)</div> 
+				<div class="ship cruiser" id="cruiser" onclick="selectShip('cruiser')">Cruiser (2)</div>
+				<div class="ship destroyer" id="destroyer" onclick="selectShip('destroyer')">Destroyer (3)</div>
+				<div class="ship submarine" id="submarine" onclick="selectShip('submarine')">Submarine (4)</div>
 
 				<div class="clearfix"></div>
 			</div>
@@ -36,17 +36,137 @@
 		<a href="#"><div class="gamebutton">Start Game</div></a>
 
 		<script type="text/javascript">
-			document.getElementById("map").style.width = (20 * 54) + "px";
+
+			var mapSize = 20;
+
+			var shipSelected = '';
+			var ship = new Array();
+
+			ship['battleship'] = {
+				size: 4,
+				color: "#f8b823",
+				placed: 0,
+				qty: 1
+			}
+
+			ship['cruiser'] = {
+				size: 3,
+				color: "#ff842f",
+				placed: 0,
+				qty: 2
+			}
+
+			ship['destroyer'] = {
+				size: 2,
+				color: "#ff6c54",
+				placed: 0,
+				qty: 3
+			}
+
+			ship['submarine'] = {
+				size: 1,
+				color: "#26d2b5",
+				placed: 0,
+				qty: 4
+			}
+			var secondPos = [];
+
+			document.getElementById("map").style.width = (mapSize * 54) + "px";
 			document.getElementById("map").style.margin = "0 auto 20px auto";
 
 			var mapBlock = "";
-			var blockSize = 20 * 20;
+			var blockSize = mapSize * mapSize;
 
 			for (var i = 0; i < blockSize; i++) {
-				mapBlock = mapBlock + "<div class=\"seablock\"></div>";
+				mapBlock = mapBlock + "<div class=\"seablock\" id=\"" + i + "\" onclick=\"seaPos("+i+")\"></div>";
 			}
 
 			document.getElementById("map").innerHTML = mapBlock;
+
+			function selectShip(shipName) {
+				if (shipSelected != "") {
+					document.getElementById(shipSelected).style.border = "3px solid " + ship[shipSelected].color;	
+				}
+				document.getElementById(shipName).style.border = "3px solid white";
+				shipSelected = shipName;
+
+			}
+
+			function seaPos(pos) {
+				if (shipSelected != "") {
+					document.getElementById(pos).style.background = ship[shipSelected].color;
+					if (ship[shipSelected].size > 1) {
+						console.log(pos);
+						var modulo = pos % mapSize;
+						var div = Math.floor(pos / mapSize);
+
+						console.log(modulo);
+						console.log(div);
+
+						var newPos = '';
+
+						if (modulo != 0) {
+							newPos = pos - 1;
+							newPosModulo = newPos % mapSize;
+							newPosDiv = Math.floor(newPos / mapSize);
+
+							secondPos.push(newPos);
+							document.getElementById(newPos).style.background = "url(\"http://parallemon.com/battleship/seasec.png\")";
+
+							if (newPosDiv > -1 || newPosDiv < (mapSize - 1)) {
+								tertPos = (newPosDiv + 1) * mapSize + newPosModulo;
+								secondPos.push(tertPos);
+								document.getElementById(tertPos).style.background = "url(\"http://parallemon.com/battleship/seasec.png\")";
+							}
+
+							if (newPosDiv > 0 || newPosDiv < (mapSize)) {
+								tertPos = (newPosDiv - 1) * mapSize + newPosModulo;
+								secondPos.push(tertPos);
+								document.getElementById(tertPos).style.background = "url(\"http://parallemon.com/battleship/seasec.png\")";
+							}
+						}
+
+						if (modulo < (mapSize - 1)) {
+							newPos = pos + 1;
+							newPosModulo = newPos % mapSize;
+							newPosDiv = Math.floor(newPos / mapSize);
+
+							secondPos.push(newPos);
+							document.getElementById(newPos).style.background = "url(\"http://parallemon.com/battleship/seasec.png\")";
+
+							if (newPosDiv > -1 || newPosDiv < (mapSize - 1)) {
+								tertPos = (newPosDiv + 1) * mapSize + newPosModulo;
+								secondPos.push(tertPos);
+								document.getElementById(tertPos).style.background = "url(\"http://parallemon.com/battleship/seasec.png\")";
+							}
+
+							if (newPosDiv > 0 || newPosDiv < (mapSize)) {
+								tertPos = (newPosDiv - 1) * mapSize + newPosModulo;
+								secondPos.push(tertPos);
+								document.getElementById(tertPos).style.background = "url(\"http://parallemon.com/battleship/seasec.png\")";
+							}
+						}
+
+						if (div > -1 || div < (mapSize - 1)) {
+							newPos = (div + 1) * mapSize + modulo;
+							secondPos.push(newPos);
+							document.getElementById(newPos).style.background = "url(\"http://parallemon.com/battleship/seasec.png\")";
+						}
+
+						if (div > 0 || div < (mapSize)) {
+							newPos = (div - 1) * mapSize + modulo;
+							secondPos.push(newPos);
+							document.getElementById(newPos).style.background = "url(\"http://parallemon.com/battleship/seasec.png\")";
+						}
+										
+
+					} else {
+						ship[shipSelected].placed = ship[shipSelected].placed + 1;
+					}
+				} else {
+					alert("you must choose the ship");
+				}
+			}
 		</script>
 
 	</body>
