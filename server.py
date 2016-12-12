@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import socket
 import threading
 import os
@@ -113,6 +116,13 @@ def routingHandler(pduResult, conn, addr):
 		component = (200, content, mime)
 		sendResponse(conn, component)
 
+	##########
+	elif (addr[1] == '_servers'):
+		content = getAllServers()
+
+		component = (200, content, "text/plain")
+		sendResponse(conn, component)
+
 	else:
 		fsource = '404.html'
 		f = open(fsource, 'r')
@@ -162,6 +172,8 @@ def handler(conn, addr):
 
 	conn.close()
 
+def getAllServers():
+	return 'Royal Navy\nMarina Militare\nUS Navy\nEesti Merevägi'
 
 # ===================================================================
 # main application here

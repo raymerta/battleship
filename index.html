@@ -12,19 +12,51 @@
 		</div>
 		<div class="seabackground">
 			<div class="gamecontainer">
-				
-				<h1>Select Server to Play</h1>
 
-				<a href="http://localhost:10001/server"><div class="gamebutton">Royal Navy</div></a>
-				<a href="http://localhost:10001/server"><div class="gamebutton">Marina Militare</div></a>
-				<a href="http://localhost:10001/server"><div class="gamebutton">US Navy</div></a>
-				<a href="http://localhost:10001/server"><div class="gamebutton">Eesti Merevägi</div></a>
+				<h1>Select Server to Play</h1>
+				<div id="serverList">
+
+				</div>
 			</div>
 		</div>
 	</body>
 
 	<script type="text/javascript">
-		// to do get list of available game server from server, display dynamically
+		function getServers() {
+				var http = new XMLHttpRequest();
+				var url = "http://localhost:10001/_servers";
+				http.open("GET", url);
+
+				//capture success response
+				http.onreadystatechange = function() {
+					if (http.readyState == 4 && http.status == 200) {
+						if (http.responseText.trim() == "") {
+							document.getElementById("serverList").innerHTML = "<div class=\"nodoc\">There are no servers.</div>";
+						} else {
+							var result = cleanUpFormat(http.responseText);
+							var textresult = "";
+
+							for (var i = 0; i < result.length - 1; i++) {
+								textresult = textresult + '<a href=\"http://localhost:10001/server\"><div class=\"gamebutton\">' + result[i] + '</div></a>'
+							}
+
+							document.getElementById("serverList").innerHTML = textresult
+						}
+					}
+				}
+
+				http.send();
+		}
+
+		function cleanUpFormat(text) {
+			return text.split("\n");
+		}
+
+
+		textresult = '<a href="http://localhost:10001/server"><div class="gamebutton">US Navy</div></a>'
+		document.getElementById("serverList").innerHTML = textresult
+
+		getServers();
 
 
 	</script>
