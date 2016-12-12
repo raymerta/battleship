@@ -19,7 +19,6 @@ Notes:
 - ensure internet is connected to load assets (images, fonts, style, etc)
 - prefer use Chrome browser for all players 
 
-
 # Development Strategy
 
 We are copying server part from the first homework
@@ -28,23 +27,29 @@ We are copying server part from the first homework
 - ensure testing crossbrowser connectivity
 
 # TO DO: 
-
 ## important
-
+### general
+- handle URL hijacking
+### server page
+- dynamic server name from server [done]
+### user page
 - send user name to server
-- reject similar name in same server
+- reject same name in same server
+### session page
 - specify map size in new game 
+### game page
+- toggle editing mode
+- send user name to server
 - get list of player
 - notification for game starting
 - notification for player joining
 - notification for player turn
-- handle URL hijacking
 
 ## nice to have 
-
-- [index] dynamic server name from server
 - [session] dynamic game session name
-
+- [game] change already positioned ship in the game
+- [game] detect ship collision placement
+- [game] change button color if all ship already placed
 
 # Requirements
 - User starts the application, and can select what game server to join

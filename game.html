@@ -12,18 +12,19 @@
 			<img src="http://parallemon.com/battleship/title.png">
 		</div>
 		<div class="notification">
-			<div class="gamecontainer">you are in editing mode</div>
+			<div class="gamecontainer" id="notifContent">you are in editing mode</div>
 		</div>
 		<div class="seabackground">
 			<div class="gamecontainer">
 				
 				<h1>Baltic Sea 1</h1>
 
+				<div id="placeShips">
 				<div class="ship battleship" id="battleship" onclick="selectShip('battleship')">Battleship (1)</div> 
 				<div class="ship cruiser" id="cruiser" onclick="selectShip('cruiser')">Cruiser (2)</div>
 				<div class="ship destroyer" id="destroyer" onclick="selectShip('destroyer')">Destroyer (3)</div>
 				<div class="ship submarine" id="submarine" onclick="selectShip('submarine')">Submarine (4)</div>
-
+				</div>
 				<div class="clearfix"></div>
 			</div>
 		</div>
@@ -33,7 +34,7 @@
 		<div class="clearfix"></div>
 
 		
-		<a href="#"><div class="gamebutton">Start Game</div></a>
+		<a href="#" id="saveGame"><div class="gamebutton" onclick="saveGame()">Start Game</div></a>
 
 		<script type="text/javascript">
 
@@ -86,15 +87,19 @@
 			document.getElementById("map").innerHTML = mapBlock;
 
 			function selectShip(shipName) {
-				if (shipSelected != "") {
-					document.getElementById(shipSelected).style.border = "3px solid " + ship[shipSelected].color;	
-				}
-				document.getElementById(shipName).style.border = "3px solid white";
-				shipSelected = shipName;
 
+				if (ship[shipName].placed < ship[shipName].qty) {
+					if (shipSelected != "") {
+						document.getElementById(shipSelected).style.border = "3px solid " + ship[shipSelected].color;	
+					}
+					document.getElementById(shipName).style.border = "3px solid white";
+					shipSelected = shipName;
+				} else {
+					alert("maximum number of ship reached");
+				}
 			}
 
-			// to do remove position in corner
+			// create lighter color for dropping ships
 			function droppingShipRange(pos) {
 				var modulo = pos % mapSize;
 				var div = Math.floor(pos / mapSize); 
@@ -139,6 +144,7 @@
 				}
 			}
 
+			// positioning battleship
 			function seaPos(pos) {
 
 				if (shipSelected != "") {
@@ -171,8 +177,16 @@
 							secondPos = [];
 							firstPos = '';
 
+							//reset button
+							document.getElementById(shipSelected).style.border = "3px solid " + ship[shipSelected].color;
+
+							//increase placed number
+							ship[shipSelected].placed = ship[shipSelected].placed + 1;
+
 							//reset if ship selected already all placed
 							shipSelected = '';
+
+							//change color of button if already reach maximum quantity
 
 						} else {
 							alert("you must select in destined area");
@@ -184,7 +198,14 @@
 							firstPos = pos;
 							droppingShipRange(pos);
 						} else {
+							//reset button
+							document.getElementById(shipSelected).style.border = "3px solid " + ship[shipSelected].color;
+
+							//increase placed number
 							ship[shipSelected].placed = ship[shipSelected].placed + 1;
+
+							//reset if ship selected already all placed
+							shipSelected = '';
 						}
 					}
 
@@ -192,6 +213,14 @@
 					alert("you must choose the ship");
 				}
 			}
+
+
+			function saveGame() {
+				document.getElementById("placeShips").style.display = "none";
+				document.getElementById("notifContent").innerHTML = "Game Ready";
+				document.getElementById("saveGame").style.display = "none";
+			}
+
 		</script>
 
 	</body>
