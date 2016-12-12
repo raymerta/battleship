@@ -97,36 +97,43 @@
 			// to do remove position in corner
 			function droppingShipRange(pos) {
 				var modulo = pos % mapSize;
-				var div = Math.floor(pos / mapSize);
+				var div = Math.floor(pos / mapSize); 
 
+				console.log("div : " + div);
+				console.log("modulo : " + modulo);
 
 				var newPos = '';
 
-				if (modulo != 0) {
+				//left
+				if ((modulo - (ship[shipSelected].size - 1)) >= 0) {
 					newPos = pos - 1;
 
 					secondPos.push(newPos);
 					document.getElementById(newPos).style.background = "url(\"http://parallemon.com/battleship/seasec.png\")";
 				}
 
-				if (modulo < (mapSize - 1)) {
+				//right
+				if ((modulo + (ship[shipSelected].size - 1)) < mapSize) {
 					newPos = pos + 1;
 
 					secondPos.push(newPos);
 					document.getElementById(newPos).style.background = "url(\"http://parallemon.com/battleship/seasec.png\")";
 				}
 
-				if (div > -1 && div < (mapSize - 1)) {
-					newPos = (div + 1) * mapSize + modulo;
+				//top
+
+				console.log("top : " + (div - (ship[shipSelected].size - 1)));
+				if ((div - (ship[shipSelected].size - 1)) >= 0) {
+					newPos = (div - 1) * mapSize + modulo;
 
 					secondPos.push(newPos);
 					document.getElementById(newPos).style.background = "url(\"http://parallemon.com/battleship/seasec.png\")";
 				}
 
-				if (div > 0 && div < (mapSize)) {
-
-					newPos = (div - 1) * mapSize + modulo;
-
+				//bottom
+				if ((div + (ship[shipSelected].size - 1)) >= 0) {
+					newPos = (div + 1) * mapSize + modulo;
+					
 					secondPos.push(newPos);
 					document.getElementById(newPos).style.background = "url(\"http://parallemon.com/battleship/seasec.png\")";
 				}
@@ -139,13 +146,16 @@
 					if (secondPos.length > 0) {
 						if (secondPos.indexOf(pos) > -1) {
 
+							//remove light color placement
 							for (var i = 0; i < secondPos.length; i++) {
 								var remPos = secondPos[i];
 								document.getElementById(remPos).style.background = "url(\"http://parallemon.com/battleship/seablock.png\")";
 							}
 
+							// put color in selection
 							document.getElementById(pos).style.background = ship[shipSelected].color;
 
+							// draw the rest of ship body
 							if (ship[shipSelected].size - 2 > 0) {
 
 								var diff = pos - firstPos;
@@ -156,6 +166,13 @@
 									curr = curr + diff;
 								}
 							}
+
+							//reset all value 
+							secondPos = [];
+							firstPos = '';
+
+							//reset if ship selected already all placed
+							shipSelected = '';
 
 						} else {
 							alert("you must select in destined area");
