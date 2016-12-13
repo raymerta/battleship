@@ -206,15 +206,22 @@ def findDuplicateName(username, serverId):
 		for info in userInfo:
 			if (int(info["serverId"]) == int(serverId)):
 				users = info["users"]
-		for user in users:
-			if (user["username"] == username):
-				print >> sys.stderr, "USERNAME ALREADY USED"
-		print >> sys.stderr, "finished finding duplicate name"
 
-		newUser = {"username": username, "userCreated" : int(time.time()) }
-		for info in userInfo:
-			if (int(info["serverId"]) == int(serverId)):
-				users.append(newUser)
+		if (users == []):
+			newUserAndServer = {"serverId" : serverId, "users": [{"username": username, "userCreated" : int(time.time()) }] }
+			userInfo.append(newUserAndServer)
+
+
+		else:
+			for user in users:
+				if (user["username"] == username):
+					print >> sys.stderr, "USERNAME ALREADY USED"
+			newUser = {"username": username, "userCreated" : int(time.time()) }
+			for info in userInfo:
+				if (int(info["serverId"]) == int(serverId)):
+					users.append(newUser)
+
+
 		content = json.dumps(userInfo)
 
 		fsource = 'users.json'
