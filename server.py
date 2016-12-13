@@ -173,7 +173,13 @@ def handler(conn, addr):
 	conn.close()
 
 def getAllServers():
-	return 'Royal Navy\nMarina Militare\nUS Navy\nEesti Merevägi'
+	fsource = 'server.json'
+	f = open(fsource, 'r')
+	mime = getMime(fsource)
+	content = f.read()
+	f.close()
+
+	return content
 
 # ===================================================================
 # main application here
