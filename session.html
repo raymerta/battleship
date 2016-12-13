@@ -32,21 +32,46 @@
 				<table>
 					<tr>
 						<td>Number of players:</td>
-						<td><input type="text" name="num" value="2"></td>
+						<td><input type="text" name="player" value="2" id="player"></td>
 						<td><span>(max 5 players)</span></td>
 					</tr>
 					<tr>
 						<td>Game Tile Size:</td>
-						<td><input type="text" name="num" value="10"></td>
+						<td><input type="text" name="tiles" value="10" id="tiles"></td>
 						<td><span>(max: 20 tiles)</span></td>
 					</tr>
 				</table>
-				<a href="#" class="newgamecancel" onclick="closeDialog()">CANCEL</a><a href="#" class="newgamesubmit">SUBMIT</a>
+				<a href="#" class="newgamecancel" onclick="closeDialog()">CANCEL</a><a href="#" class="newgamesubmit" onclick="createGame()">SUBMIT</a>
 				<div class="clearfix"></div>
 			</div>
 		</div>
 
 		<script type="text/javascript">
+
+			var server = '';
+			var uri = window.location.pathname.split('/');
+
+			function getServerDetail() {
+				
+				var http = new XMLHttpRequest();
+				var url = "http://localhost:10001/_getservername/" + uri[2];
+				http.open("GET", url);
+
+				//capture success response
+				http.onreadystatechange = function() {
+					if (http.readyState == 4 && http.status == 200) {
+						server = JSON.parse(http.responseText);
+
+						console.log(server.serverName);
+						document.getElementById("serverName").innerHTML = server.serverName;
+					}
+				}
+
+				http.send();
+			}
+
+			getServerDetail();
+
 			function openDialog() {
 				document.getElementById("newGameDialog").style.display = "block";
 			}
@@ -57,6 +82,23 @@
 
 			function createGame() {
 				
+				var username = uri[3];
+				var tiles = document.getElementById("tiles").value;
+				var player = document.getElementById("player").value;
+
+				var http = new XMLHttpRequest();
+				var url = "http://localhost:10001/_insertname/";
+				var params = username + ";" + server.serverId + ";" + server.serverUrl + ';' + tiles ';' + player;
+				http.open("POST", url, true);
+
+				//capture success response
+				http.onreadystatechange = function() {
+					if (http.readyState == 4 && http.status == 200) {
+						window.location = http.responseText.trim();
+					}
+				}
+
+				http.send(params);	
 			}
 		</script>
 

@@ -8,11 +8,21 @@ Yes, it is. A web service is a specific implementation of RPC. At its lowest lev
 
 http://stackoverflow.com/questions/3028899/what-is-the-difference-between-remote-procedure-call-and-web-service
 
+
 # How to run the game? 
+
+## Installing RabbitMQ + WebStomp + Pika
+
+- install rabbitMQ (https://www.rabbitmq.com/download.html)
+- install web stomp (https://www.rabbitmq.com/web-stomp.html)
+- install Pika (http://pika.readthedocs.io/en/0.10.0/) 
+
+## running the game itself // need to be updated
 
 - open terminal
 - run 'python server.py'
-- open Chrome browser, type 'http://localhost:10001/' 
+- open Chrome browser, type 'http://localhost:10001/'
+
 
 Notes: 
 
@@ -31,20 +41,25 @@ We are copying server part from the first homework
 ## important
 
 ### general
+
 - handle URL hijacking
 
 ### server page
+
 - dynamic server name from server [done]
 
 ### user page
+
 - send user name to server [done]
 - reject same name in same server
 
 ### session page
+
 - specify map size in new game 
 - load existing open map
 
 ### game page
+
 - toggle editing mode [done]
 - get list of player
 - notification for game starting
@@ -52,6 +67,7 @@ We are copying server part from the first homework
 - notification for player turn
 
 ## nice to have 
+
 - [session] dynamic game session name
 - [game] change already positioned ship in the game
 - [game] detect ship collision placement

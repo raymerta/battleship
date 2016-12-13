@@ -4,6 +4,9 @@
 		<link rel="stylesheet" type="text/css" href="http://parallemon.com/battleship/battleshipstyle.css">
 		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab:100,300,400,700" rel="stylesheet">
 
+		<script type="text/javascript" src="http://parallemon.com/battleship/sockjs-0.3.js"></script>
+		<script type="text/javascript" src="http://parallemon.com/battleship/stomp.js"></script>
+
 	</head>
 	<body>
 
@@ -22,6 +25,7 @@
 	</body>
 
 	<script type="text/javascript">
+
 		function getServers() {
 			var http = new XMLHttpRequest();
 			var url = "http://localhost:10001/_servers";
@@ -57,6 +61,57 @@
 		document.getElementById("serverList").innerHTML = textresult
 
 		getServers();
+
+
+		// Use SockJS
+		Stomp.WebSocketClass = SockJS;
+
+		// Connection parameters
+		var mq_username = "guest";
+		var mq_password = "guest";
+		var mq_vhost = "/";
+		var mq_url = 'http://localhost:15674/stomp';
+
+		    //topic name
+		var mq_queue = "/topic/servers";
+		var mq_ctype = {"content-type":"text/plain"};
+
+		// This is where we print incomoing messages
+		var output;
+
+		// This will be called upon successful connection
+		function on_connect() {
+			console.log('connected');
+			console.log(client);
+		  	client.subscribe(mq_queue, on_message);
+		}
+
+		// This will be called upon a connection error
+		function on_connect_error() {
+			console.log(client);
+			console.log("connection error");
+		}
+
+		// This will be called upon arrival of a message
+		function on_message(m) {
+		  	console.log('message received');
+
+		 	var result = cleanUpFormat(m.body.trim());
+			var textresult = "";
+
+			for (var i = 0; i < result.length; i++) {
+				textresult = textresult + "<a href=\"http://localhost:10001/server/" + result[i].serverUrl + "\"><div class=\"gamebutton\">" + result[i].serverName + "</div></a>"
+			}
+
+			document.getElementById("serverList").innerHTML = textresult;	
+		}
+
+		// Create a client
+		var client = Stomp.client(mq_url);
+
+		window.onload = function () {
+			client.connect(mq_username, mq_password, on_connect, on_connect_error, mq_vhost);
+		}
 
 
 	</script>
