@@ -2,8 +2,10 @@
 	<head>
 		<title>BATTLESHIP</title>
 		<link rel="stylesheet" type="text/css" href="http://parallemon.com/battleship/battleshipstyle.css">
-		<!-- <link rel="stylesheet" type="text/css" href="battleshipstyle.css"> -->
 		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab:100,300,400,700" rel="stylesheet">
+
+		<script type="text/javascript" src="http://parallemon.com/battleship/sockjs-0.3.js"></script>
+		<script type="text/javascript" src="http://parallemon.com/battleship/stomp.js"></script>
 	</head>
 
 	<body>
@@ -13,10 +15,14 @@
 		</div>
 		<div class="seabackground">
 			<div class="gamecontainer">
+
+				<p>Server selected:</p>
+
+				<h1 class="servername" id="serverName"></h1>
 				
 				<h1>Choose the game</h1>
 
-				<a href="http://localhost:10001/game" onclick="openDialog()"><div class="gamebutton">New Game</div></a>
+				<a href="#" onclick="openDialog()"><div class="gamebutton">New Game</div></a>
 
 				<!-- <a href="http://localhost:10001/game"><div class="gamebutton">Baltic Sea 1</div></a>
 				<a href="http://localhost:10001/game"><div class="gamebutton">Atlantic Sea 1</div></a>
@@ -27,6 +33,7 @@
 
 		<div id="newGameDialog" class="blackdrop" style="display: none;">
 			<div class="newgamebox">
+
 				<h1>Create New Game</h1>
 
 				<table>
@@ -72,23 +79,26 @@
 
 			getServerDetail();
 
+			// open new game creation dialog
 			function openDialog() {
+				console.log('open');
 				document.getElementById("newGameDialog").style.display = "block";
 			}
 
+			// close new game creation dialog
 			function closeDialog() {
 				document.getElementById("newGameDialog").style.display = "none";	
 			}
 
+			// submit game creation
 			function createGame() {
-				
 				var username = uri[3];
 				var tiles = document.getElementById("tiles").value;
 				var player = document.getElementById("player").value;
 
 				var http = new XMLHttpRequest();
-				var url = "http://localhost:10001/_insertname/";
-				var params = username + ";" + server.serverId + ";" + server.serverUrl + ';' + tiles ';' + player;
+				var url = "http://localhost:10001/_createGame/";
+				var params = username + ";" + server.serverId + ";" + server.serverUrl + ';' + tiles + ';' + player;
 				http.open("POST", url, true);
 
 				//capture success response
@@ -100,6 +110,49 @@
 
 				http.send(params);	
 			}
+
+			// Use SockJS
+			Stomp.WebSocketClass = SockJS;
+
+			// Connection parameters
+			var mq_username = "guest";
+			var mq_password = "guest";
+			var mq_vhost = "/";
+			var mq_url = 'http://localhost:15674/stomp';
+
+			    //topic name
+			var mq_queue = "/topic/games-" + server.serverUrl;
+			var mq_ctype = {"content-type":"text/plain"};
+
+			// This is where we print incomoing messages
+			var output;
+
+			// This will be called upon successful connection
+			function on_connect() {
+				console.log('connected');
+				console.log(client);
+			  	client.subscribe(mq_queue, on_message);
+			}
+
+			// This will be called upon a connection error
+			function on_connect_error() {
+				console.log(client);
+				console.log("connection error");
+			}
+
+			// This will be called upon arrival of a message
+			function on_message(m) {
+			  	console.log('message received');
+				console.log(m.body.trim());	
+			}
+
+			// Create a client
+			var client = Stomp.client(mq_url);
+
+			window.onload = function () {
+				client.connect(mq_username, mq_password, on_connect, on_connect_error, mq_vhost);
+			}
+
 		</script>
 
 	</body>

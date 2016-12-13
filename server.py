@@ -149,6 +149,8 @@ def routingHandler(pduResult, conn, addr):
 	elif (addr[1] == '_getservername'):
 		content = getServerName(addr[2])
 
+		print content
+
 		component = (200, content, "text/plain")
 		sendResponse(conn, component)
 
@@ -261,7 +263,7 @@ def gameRoomInformation(roomId):
 	return
 
 def getServerName(url):
-	servers = json.loads(getAllServers())
+	servers = json.loads(common.getAllServers())
 
 	for server in servers: 
 		#print >> sys.stderr, server['serverUrl']
