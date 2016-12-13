@@ -2,6 +2,7 @@
 	<head>
 		<title>BATTLESHIP</title>
 		<link rel="stylesheet" type="text/css" href="http://parallemon.com/battleship/battleshipstyle.css">
+		<!-- <link rel="stylesheet" type="text/css" href="battleshipstyle.css"> -->
 		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab:100,300,400,700" rel="stylesheet">
 	</head>
 
@@ -16,11 +17,34 @@
 				<h1>Choose the game</h1>
 
 				<a href="http://localhost:10001/game"><div class="gamebutton">New Game</div></a>
+
 				<a href="http://localhost:10001/game"><div class="gamebutton">Baltic Sea 1</div></a>
 				<a href="http://localhost:10001/game"><div class="gamebutton">Atlantic Sea 1</div></a>
 				<a href="http://localhost:10001/game"><div class="gamebutton">Pacific Sea 1</div></a>
 
 			</div>
 		</div>
+
+		<div class="blackdrop">
+			<div class="newgamebox">
+				<h1>Create New Game</h1>
+
+				<table>
+					<tr>
+						<td>Number of players:</td>
+						<td><input type="text" name="num" value="2"></td>
+						<td><span>(max 5 players)</span></td>
+					</tr>
+					<tr>
+						<td>Game Tile Size:</td>
+						<td><input type="text" name="num" value="10"></td>
+						<td><span>(max: 20 tiles)</span></td>
+					</tr>
+				</table>
+				<a href="#" class="newgamecancel">CANCEL</a><a href="#" class="newgamesubmit">SUBMIT</a>
+				<div class="clearfix"></div>
+			</div>
+		</div>
+
 	</body>
 </html>

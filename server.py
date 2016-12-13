@@ -225,6 +225,17 @@ def getServerName(url):
 		if (server['serverUrl'] == url): 
 			return json.dumps(server)
 
+def getSessionServer(serverId):
+	fsource = 'sessions.json'
+	f = open(fsource, 'r')
+	content = f.read()
+	f.close()
+
+	if (content != ""):
+		print >> sys.stderr, content
+	else:
+		return None
+
 def getAllUsers():
 	fsource = 'users.json'
 	f = open(fsource, 'r')
