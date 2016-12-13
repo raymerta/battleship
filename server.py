@@ -129,6 +129,12 @@ def routingHandler(pduResult, conn, addr):
 			component = (200, content, "text/plain")
 			sendResponse(conn, component)
 
+	elif (addr[1] == '_createGame'):
+
+		content = 'http://localhost:10001/game/%s/%s/%s' % (serverUrl, username, room)
+		component = (200, content, "text/plain")
+		sendResponse(conn, component)
+
 	elif (addr[1] == '_getservername'):
 		content = getServerName(addr[2])
 

@@ -16,7 +16,7 @@
 				
 				<h1>Choose the game</h1>
 
-				<a href="http://localhost:10001/game"><div class="gamebutton">New Game</div></a>
+				<a href="http://localhost:10001/game" onclick="openDialog()"><div class="gamebutton">New Game</div></a>
 
 				<a href="http://localhost:10001/game"><div class="gamebutton">Baltic Sea 1</div></a>
 				<a href="http://localhost:10001/game"><div class="gamebutton">Atlantic Sea 1</div></a>
@@ -25,7 +25,7 @@
 			</div>
 		</div>
 
-		<div class="blackdrop">
+		<div id="newGameDialog" class="blackdrop" style="display: none;">
 			<div class="newgamebox">
 				<h1>Create New Game</h1>
 
@@ -41,10 +41,24 @@
 						<td><span>(max: 20 tiles)</span></td>
 					</tr>
 				</table>
-				<a href="#" class="newgamecancel">CANCEL</a><a href="#" class="newgamesubmit">SUBMIT</a>
+				<a href="#" class="newgamecancel" onclick="closeDialog()">CANCEL</a><a href="#" class="newgamesubmit">SUBMIT</a>
 				<div class="clearfix"></div>
 			</div>
 		</div>
+
+		<script type="text/javascript">
+			function openDialog() {
+				document.getElementById("newGameDialog").style.display = "block";
+			}
+
+			function closeDialog() {
+				document.getElementById("newGameDialog").style.display = "none";	
+			}
+
+			function createGame() {
+				
+			}
+		</script>
 
 	</body>
 </html>
