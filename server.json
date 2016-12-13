@@ -1,7 +1,6 @@
-{
-	"servers": [
-		{"serverName" : "Royal Navy", "serverUrl" : "royal-navy"},
-		{"serverName" : "Marina Militare", "serverUrl" : "marina-militare"},
-		{"serverName" : "US Navy", "serverUrl" : "us-navy"},
-		{"serverName" : "Eesti Merevägi", "serverUrl" : "eesti-merevagi"}
-]}
+[
+	{"serverName" : "Royal Navy", "serverUrl" : "royal-navy", "serverId" : 1},
+	{"serverName" : "Marina Militare", "serverUrl" : "marina-militare",  "serverId" : 2},
+	{"serverName" : "US Navy", "serverUrl" : "us-navy",  "serverId" : 3},
+	{"serverName" : "Eesti Merevägi", "serverUrl" : "eesti-merevagi",  "serverId" : 4}
+]

@@ -13,7 +13,11 @@
 		<div class="seabackground">
 			<div class="gamecontainer">
 				
-				<h1>Insert your username </h1>
+				<p>Server selected:</p>
+
+				<h1 class="servername" id="serverName"></h1>
+
+				<h1>Insert username to play</h1>
 
 				<input class="gametext" type="text"/>
 
@@ -21,5 +25,31 @@
 				<a href="#"><div class="gamebutton">Submit</div></a>
 			</div>
 		</div>
+
+		<script type="text/javascript">
+
+			function getServerDetail() {
+				var uri = window.location.pathname.split('/');
+
+				var http = new XMLHttpRequest();
+				var url = "http://localhost:10001/_getservername/" + uri[2];
+				http.open("GET", url);
+
+				//capture success response
+				http.onreadystatechange = function() {
+					if (http.readyState == 4 && http.status == 200) {
+						var server = JSON.parse(http.responseText);
+
+						console.log(server.serverName);
+						document.getElementById("serverName").innerHTML = server.serverName;
+					}
+				}
+
+				http.send();
+			}
+
+			getServerDetail();
+		</script>
+
 	</body>
 </html>

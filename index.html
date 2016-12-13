@@ -23,38 +23,37 @@
 
 	<script type="text/javascript">
 		function getServers() {
-				var http = new XMLHttpRequest();
-				var url = "http://localhost:10001/_servers";
-				http.open("GET", url);
+			var http = new XMLHttpRequest();
+			var url = "http://localhost:10001/_servers";
+			http.open("GET", url);
 
-				//capture success response
-				http.onreadystatechange = function() {
-					if (http.readyState == 4 && http.status == 200) {
-						if (http.responseText.trim() == "") {
-							document.getElementById("serverList").innerHTML = "<div class=\"nodoc\">There are no servers.</div>";
-						} else {
-							var result = cleanUpFormat(http.responseText);
-							var textresult = "";
+			//capture success response
+			http.onreadystatechange = function() {
+				if (http.readyState == 4 && http.status == 200) {
+					if (http.responseText.trim() == "") {
+						document.getElementById("serverList").innerHTML = "<div>There are no servers.</div>";
+					} else {
+						var result = cleanUpFormat(http.responseText);
+						var textresult = "";
 
-							for (var i = 0; i < result.length; i++) {
-								textresult = textresult + "<a href=\"http://localhost:10001/server/" + result[i].serverUrl + "\"><div class=\"gamebutton\">" + result[i].serverName + "</div></a>"
-							}
-
-							document.getElementById("serverList").innerHTML = textresult
+						for (var i = 0; i < result.length; i++) {
+							textresult = textresult + "<a href=\"http://localhost:10001/server/" + result[i].serverUrl + "\"><div class=\"gamebutton\">" + result[i].serverName + "</div></a>"
 						}
+
+						document.getElementById("serverList").innerHTML = textresult
 					}
 				}
+			}
 
-				http.send();
+			http.send();
 		}
 
 		function cleanUpFormat(text) {
 			var data = JSON.parse(text);
-			return data.servers;
+			return data;
 		}
 
-
-		textresult = '<a href="http://localhost:10001/server"><div class="gamebutton">US Navy</div></a>'
+		textresult = ''
 		document.getElementById("serverList").innerHTML = textresult
 
 		getServers();

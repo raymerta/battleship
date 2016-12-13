@@ -7,6 +7,7 @@ import os
 import sys
 import random
 import time
+import json
 
 serverAddress = ('localhost', 10001)
 
@@ -117,6 +118,12 @@ def routingHandler(pduResult, conn, addr):
 		sendResponse(conn, component)
 
 	##########
+	elif (addr[1] == '_getservername'):
+		content = getServerName(addr[2])
+
+		component = (200, content, "text/plain")
+		sendResponse(conn, component)
+
 	elif (addr[1] == '_servers'):
 		content = getAllServers()
 
@@ -137,7 +144,7 @@ def sendResponse(conn, component):
 	template = responseHeaders[component[0]]
 	data = template % (component[2], component[1])
 
-	print >> sys.stderr, data
+	#print >> sys.stderr, data
 
 	conn.sendall(data)
 
@@ -164,7 +171,9 @@ def handler(conn, addr):
 
 	# parsing uri request
 	pduResult = parseRequest(conn)
-	print pduResult.content
+	
+	#print >> sys.stderr, pduResult.content
+
 	#print >> sys.stderr, 'URI accessed : %s' % pduResult.uri
 
 	# handling URI and print suitable pages
@@ -172,10 +181,23 @@ def handler(conn, addr):
 
 	conn.close()
 
+# ===================================================================
+# game related function here
+# ===================================================================
+
+def getServerName(url):
+	content = getAllServers()
+	servers = json.loads(content)
+
+	for server in servers: 
+		#print >> sys.stderr, server['serverUrl']
+		if (server['serverUrl'] == url): 
+			return json.dumps(server)
+
+
 def getAllServers():
 	fsource = 'server.json'
 	f = open(fsource, 'r')
-	mime = getMime(fsource)
 	content = f.read()
 	f.close()
 
