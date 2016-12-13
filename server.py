@@ -118,6 +118,17 @@ def routingHandler(pduResult, conn, addr):
 		sendResponse(conn, component)
 
 	##########
+	elif (addr[1] == '_insertname'):
+		username = pduResult.content.strip().split(";")[0]
+		serverId = pduResult.content.strip().split(";")[1]
+		serverUrl = pduResult.content.strip().split(";")[2]
+		isDuplicate = findDuplicateName(username, serverId)
+
+		if (isDuplicate == False):
+			content = 'http://localhost:10001/session/%s/%s' % (serverUrl, username)
+			component = (200, content, "text/plain")
+			sendResponse(conn, component)
+
 	elif (addr[1] == '_getservername'):
 		content = getServerName(addr[2])
 
@@ -185,15 +196,42 @@ def handler(conn, addr):
 # game related function here
 # ===================================================================
 
+# todo fix this part
+def findDuplicateName(username, serverId): 
+	content = getAllUsers()
+
+	if (content != ""):
+		users = json.loads(content)
+		#todo
+
+	else:
+		#empty json file, proceed to create initial content
+		data = [{"serverId" : serverId, "users": [{"username": username, "userCreated" : int(time.time()) }] }]
+		content = json.dumps(data)
+
+		fsource = 'users.json'
+		f = open(fsource, 'w')
+		f.write(content)
+		f.close()
+
+		return False
+
+
 def getServerName(url):
-	content = getAllServers()
-	servers = json.loads(content)
+	servers = json.loads(getAllServers())
 
 	for server in servers: 
 		#print >> sys.stderr, server['serverUrl']
 		if (server['serverUrl'] == url): 
 			return json.dumps(server)
 
+def getAllUsers():
+	fsource = 'users.json'
+	f = open(fsource, 'r')
+	content = f.read()
+	f.close()
+
+	return content
 
 def getAllServers():
 	fsource = 'server.json'

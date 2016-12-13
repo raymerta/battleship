@@ -19,14 +19,16 @@
 
 				<h1>Insert username to play</h1>
 
-				<input class="gametext" type="text"/>
+				<input id="username" class="gametext" type="text"/>
 
 				<br/>
-				<a href="#"><div class="gamebutton">Submit</div></a>
+				<a href="#"><div class="gamebutton" onclick="submitName()">Submit</div></a>
 			</div>
 		</div>
 
 		<script type="text/javascript">
+
+			var server = '';
 
 			function getServerDetail() {
 				var uri = window.location.pathname.split('/');
@@ -38,7 +40,7 @@
 				//capture success response
 				http.onreadystatechange = function() {
 					if (http.readyState == 4 && http.status == 200) {
-						var server = JSON.parse(http.responseText);
+						server = JSON.parse(http.responseText);
 
 						console.log(server.serverName);
 						document.getElementById("serverName").innerHTML = server.serverName;
@@ -49,6 +51,24 @@
 			}
 
 			getServerDetail();
+
+			function submitName() {
+				var username = document.getElementById("username").value
+
+				var http = new XMLHttpRequest();
+				var url = "http://localhost:10001/_insertname/";
+				var params = username + ";" + server.serverId + ";" + server.serverUrl;
+				http.open("POST", url, true);
+
+				//capture success response
+				http.onreadystatechange = function() {
+					if (http.readyState == 4 && http.status == 200) {
+						window.location = http.responseText.trim();
+					}
+				}
+
+				http.send(params);
+			}
 		</script>
 
 	</body>
