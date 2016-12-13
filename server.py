@@ -182,7 +182,7 @@ def handler(conn, addr):
 
 	# parsing uri request
 	pduResult = parseRequest(conn)
-	
+
 	#print >> sys.stderr, pduResult.content
 
 	#print >> sys.stderr, 'URI accessed : %s' % pduResult.uri
@@ -197,12 +197,32 @@ def handler(conn, addr):
 # ===================================================================
 
 # todo fix this part
-def findDuplicateName(username, serverId): 
+def findDuplicateName(username, serverId):
 	content = getAllUsers()
 
 	if (content != ""):
-		users = json.loads(content)
-		#todo
+		userInfo = json.loads(content)
+		users = []
+		for info in userInfo:
+			if (int(info["serverId"]) == int(serverId)):
+				users = info["users"]
+		for user in users:
+			if (user["username"] == username):
+				print >> sys.stderr, "USERNAME ALREADY USED"
+		print >> sys.stderr, "finished finding duplicate name"
+
+		newUser = {"username": username, "userCreated" : int(time.time()) }
+		for info in userInfo:
+			if (int(info["serverId"]) == int(serverId)):
+				users.append(newUser)
+		content = json.dumps(userInfo)
+
+		fsource = 'users.json'
+		f = open(fsource, 'w')
+		f.write(content)
+		f.close()
+
+		return False
 
 	else:
 		#empty json file, proceed to create initial content
@@ -220,9 +240,9 @@ def findDuplicateName(username, serverId):
 def getServerName(url):
 	servers = json.loads(getAllServers())
 
-	for server in servers: 
+	for server in servers:
 		#print >> sys.stderr, server['serverUrl']
-		if (server['serverUrl'] == url): 
+		if (server['serverUrl'] == url):
 			return json.dumps(server)
 
 def getAllUsers():
