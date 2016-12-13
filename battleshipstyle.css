@@ -88,6 +88,11 @@ table {
     color: #26d2b5;
 }
 
+span.emphasize {
+	color: #26d2b5;
+	font-weight: 700;
+}
+
 .notification {
 	background: #29bda3;
 	padding: 20px;

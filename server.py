@@ -139,8 +139,6 @@ def routingHandler(pduResult, conn, addr):
 
 		gameCreated = createGameRoom(tiles, player, serverId, username)
 
-		print "createGame"
-
 		if (gameCreated > 0):
 			content = 'http://localhost:10001/game/%s/%s/%s' % (serverUrl, username, gameCreated)
 			component = (200, content, "text/plain")
@@ -149,10 +147,14 @@ def routingHandler(pduResult, conn, addr):
 	elif (addr[1] == '_getservername'):
 		content = getServerName(addr[2])
 
-		print content
-
 		component = (200, content, "text/plain")
 		sendResponse(conn, component)
+
+	elif (addr[1] == '_getGameInfo'):
+		content = getGameInfo(addr[2])
+
+		component = (200, content, "text/plain")
+		sendResponse(conn, component)	
 
 	elif (addr[1] == '_servers'):
 		content = common.getAllServers()
@@ -197,15 +199,9 @@ def parseRequest(conn):
 	return PDU(data)
 
 def handler(conn, addr):
-
-
 	# parsing uri request
 	pduResult = parseRequest(conn)
 	
-	#print >> sys.stderr, pduResult.content
-
-	#print >> sys.stderr, 'URI accessed : %s' % pduResult.uri
-
 	# handling URI and print suitable pages
 	routingHandler(pduResult, conn, addr)
 
@@ -235,7 +231,7 @@ def findDuplicateName(username, serverId):
 
 		return False
 
-gameRoomName = {'Atlantic Ocean', 'Arctic Ocean', 'Indian Ocean', 'Pacific Ocean'}
+gameRoomName = ['Atlantic Ocean', 'Arctic Ocean', 'Indian Ocean', 'Pacific Ocean']
 
 def createGameRoom(tiles, player, serverId, username): 
 	content = getAllSessions()
@@ -247,7 +243,9 @@ def createGameRoom(tiles, player, serverId, username):
 	else:
 		#empty json file, proceed to create initial content
 		roomType = random.randint(0, (len(gameRoomName) - 1))
-		data = [{"serverId" : serverId, "numPlayers" : player, "size" : tiles, "creator": username , "roomType": roomType, "roomCreated": int(time.time()), "isPlaying": False, "isEnded" : False , "gameRoomId" : 1, "users": [{"username": username, "isTurn" : False, "isDefeated" : False, "isWinning" : False }] }]
+		roomName = gameRoomName[roomType]
+
+		data = [{"serverId" : serverId, "numPlayers" : player, "size" : tiles, "creator": username , "roomName": roomName, "roomCreated": int(time.time()), "isPlaying": False, "isEnded" : False , "gameRoomId" : 1, "users": [{"username": username, "isTurn" : False, "isDefeated" : False, "isWinning" : False }] }]
 		content = json.dumps(data)
 
 		fsource = 'sessions.json'
@@ -258,15 +256,19 @@ def createGameRoom(tiles, player, serverId, username):
 		#return user ID number
 		return 1
 
-def gameRoomInformation(roomId):
-
-	return
+def getGameInfo(roomId):
+	print roomId
+	games = json.loads(getAllSessions())
+	for game in games:
+		print game
+		if (int(game['gameRoomId']) == int(roomId)):
+			print game
+			return json.dumps(game)
 
 def getServerName(url):
 	servers = json.loads(common.getAllServers())
 
 	for server in servers: 
-		#print >> sys.stderr, server['serverUrl']
 		if (server['serverUrl'] == url): 
 			return json.dumps(server)
 

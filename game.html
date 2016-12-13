@@ -17,7 +17,9 @@
 		<div class="seabackground">
 			<div class="gamecontainer">
 				
-				<h1>Baltic Sea 1</h1>
+				<p>Server selected : <span id="serverName" class="emphasize"></span> - Game : </p>
+
+				<h1 class="servername" id="gameName">Baltic Sea 1</h1>
 
 				<div id="placeShips">
 				<div class="ship battleship" id="battleship" onclick="selectShip('battleship')">Battleship (1)</div> 
@@ -38,7 +40,53 @@
 
 		<script type="text/javascript">
 
-			var mapSize = 20;
+			var mapSize = 10;
+			var numPlayer = 2;
+
+			var server = '';
+			var uri = window.location.pathname.split('/');
+
+			function getServerDetail() {
+				var http = new XMLHttpRequest();
+				var url = "http://localhost:10001/_getservername/" + uri[2];
+				http.open("GET", url);
+
+				//capture success response
+				http.onreadystatechange = function() {
+					if (http.readyState == 4 && http.status == 200) {
+						server = JSON.parse(http.responseText);
+						document.getElementById("serverName").innerHTML = server.serverName;
+					}
+				}
+
+				http.send();
+			}
+
+			getServerDetail();
+
+			function getGameInfo() {
+				var http = new XMLHttpRequest();
+				var url = "http://localhost:10001/_getGameInfo/" + uri[4];
+				http.open("GET", url);
+
+				//capture success response
+				http.onreadystatechange = function() {
+					if (http.readyState == 4 && http.status == 200) {
+						if (http.responseText != "None") {
+							game = JSON.parse(http.responseText.trim());
+							console.log(game);
+
+							mapSize = game.size;
+							document.getElementById("gameName").innerHTML = game.roomName;
+							generateMap();
+						}
+					}
+				}
+
+				http.send();
+			}
+
+			getGameInfo();
 
 			var shipSelected = '';
 			var ship = new Array();
@@ -74,17 +122,19 @@
 			var firstPos = "";
 			var secondPos = [];
 
-			document.getElementById("map").style.width = (mapSize * 54) + "px";
-			document.getElementById("map").style.margin = "0 auto 20px auto";
+			function generateMap() {
+				document.getElementById("map").style.width = (mapSize * 54) + "px";
+				document.getElementById("map").style.margin = "0 auto 20px auto";
 
-			var mapBlock = "";
-			var blockSize = mapSize * mapSize;
+				var mapBlock = "";
+				var blockSize = mapSize * mapSize;
 
-			for (var i = 0; i < blockSize; i++) {
-				mapBlock = mapBlock + "<div class=\"seablock\" id=\"" + i + "\" onclick=\"seaPos("+i+")\"></div>";
+				for (var i = 0; i < blockSize; i++) {
+					mapBlock = mapBlock + "<div class=\"seablock\" id=\"" + i + "\" onclick=\"seaPos("+i+")\"></div>";
+				}
+
+				document.getElementById("map").innerHTML = mapBlock;
 			}
-
-			document.getElementById("map").innerHTML = mapBlock;
 
 			function selectShip(shipName) {
 
@@ -103,9 +153,6 @@
 			function droppingShipRange(pos) {
 				var modulo = pos % mapSize;
 				var div = Math.floor(pos / mapSize); 
-
-				console.log("div : " + div);
-				console.log("modulo : " + modulo);
 
 				var newPos = '';
 
@@ -126,8 +173,6 @@
 				}
 
 				//top
-
-				console.log("top : " + (div - (ship[shipSelected].size - 1)));
 				if ((div - (ship[shipSelected].size - 1)) >= 0) {
 					newPos = (div - 1) * mapSize + modulo;
 
@@ -182,6 +227,7 @@
 
 							//increase placed number
 							ship[shipSelected].placed = ship[shipSelected].placed + 1;
+							document.getElementById(shipSelected).innerHTML = shipSelected + " (" + (ship[shipSelected].qty - ship[shipSelected].placed) + ")";
 
 							//reset if ship selected already all placed
 							shipSelected = '';
@@ -203,6 +249,7 @@
 
 							//increase placed number
 							ship[shipSelected].placed = ship[shipSelected].placed + 1;
+							document.getElementById(shipSelected).innerHTML = shipSelected + " (" + (ship[shipSelected].qty - ship[shipSelected].placed) + ")";
 
 							//reset if ship selected already all placed
 							shipSelected = '';

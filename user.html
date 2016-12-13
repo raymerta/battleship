@@ -28,12 +28,10 @@
 
 		<script type="text/javascript">
 
-			
-
 			var server = '';
+			var uri = window.location.pathname.split('/');
 
 			function getServerDetail() {
-				var uri = window.location.pathname.split('/');
 
 				var http = new XMLHttpRequest();
 				var url = "http://localhost:10001/_getservername/" + uri[2];
