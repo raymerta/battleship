@@ -27,19 +27,25 @@ We are copying server part from the first homework
 - ensure testing crossbrowser connectivity
 
 # TO DO: 
+
 ## important
+
 ### general
 - handle URL hijacking
+
 ### server page
 - dynamic server name from server [done]
+
 ### user page
-- send user name to server
+- send user name to server [done]
 - reject same name in same server
+
 ### session page
 - specify map size in new game 
+- load existing open map
+
 ### game page
-- toggle editing mode
-- send user name to server
+- toggle editing mode [done]
 - get list of player
 - notification for game starting
 - notification for player joining
