@@ -152,6 +152,14 @@ def routingHandler(pduResult, conn, addr):
 		component = (200, content, "text/plain")
 		sendResponse(conn, component)
 
+	elif (addr[1] == '_getGameStatus'):
+		roomId = addr[2]
+		content = getGameStatus(roomId)
+
+		component = (200, content, "text/plain")
+		sendResponse(conn, component)
+
+
 	elif (addr[1] == '_createGame'):
 		username = pduResult.content.strip().split(";")[0]
 		serverId = pduResult.content.strip().split(";")[1]
@@ -371,7 +379,7 @@ def updateStatusUser(status, username, roomId):
 
 def getGameStatus(roomId):
 
-	#TODO return True if all users in this roomID is already in isPlaying : True mode, return False otherwise
+	#TODO return True if all users in this roomID is already in isPlaying : True mode and number of users is equal to number of maximum players, return False otherwise
 
 	return True
 

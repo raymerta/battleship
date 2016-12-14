@@ -68,6 +68,7 @@
 		<script type="text/javascript">
 
 			var mapSize = 10;
+			var maxPlayers = 2;
 			var isEditing = true;
 			var isWatching = false;
 			var isPlaying = false;
@@ -130,10 +131,23 @@
 
 				if (msg.name == 'add_user') {
 			  		var username = msg.username;
-			  		currUsers.push(username);
+			  		var status = msg.isPlaying;
+			  		currUsers.push({ "username" : username, "isPlaying" : status});
 			  		
 			  		document.getElementById("displayUser").innerHTML = document.getElementById("displayUser").innerHTML + '<a href="#" class="user" id="user-' + username + '" style="background: ' + colors[currUsers.length - 1] + '; border: 3px solid ' + colors[currUsers.length - 1] + ';">' + username + '</a>';
-			  	}			  	
+			  	}	
+
+			  	if (msg.name == 'save_game') {
+			  		var username = msg.username;
+			  		var status = msg.isPlaying;
+			  		
+			  		var index = currUsers.indexOf(username);
+			  		currUsers[index] = { "username" : username, "isPlaying" : status};
+			  		
+			  		if (gameStarted()) {
+			  			document.getElementById("notifContent").innerHTML = messages[2];
+			  		}
+			  	}		  	
 			  	
 			}
 
@@ -143,7 +157,6 @@
 			client.connect(mq_username, mq_password, on_connect, on_connect_error, mq_vhost);
 
 			//===================================
-
 
 			function getServerDetail() {
 				var http = new XMLHttpRequest();
@@ -177,6 +190,7 @@
 							console.log(game);
 
 							mapSize = game.size;
+							maxPlayers = game.numPlayers;
 						
 							document.getElementById("gameName").innerHTML = game.roomName;
 							document.getElementById("popupGameName").innerHTML = game.roomName;
@@ -240,7 +254,7 @@
 
 							document.getElementById("blackDrop").style.display = "none";
 
-							var msg = {"name" : "add_user" , "username" : uri[3]};
+							var msg = {"name" : "add_user" , "username" : uri[3], "isPlaying" : false};
 							client.send(mq_queue, {"content-type":"text/plain"}, JSON.stringify(msg));
 
 						} else {
@@ -345,6 +359,9 @@
 
 			// create lighter color for dropping ships
 			function droppingShipRange(pos) {
+
+				//TODO do not add white range if it's near other existing ship
+
 				var modulo = pos % mapSize;
 				var div = Math.floor(pos / mapSize); 
 
@@ -492,7 +509,13 @@
 				console.log(ship);
 				savingPosition();
 
+				// rabbitmq update
+				var msg = {"name" : "save_game" , "username" : uri[3], "isPlaying" : true};
+				client.send(mq_queue, {"content-type":"text/plain"}, JSON.stringify(msg));
+
+				//requesting from server
 				updateStatusUser('edit');
+				getGameStatus();
 			}
 
 			function updateStatusUser(status) {
@@ -515,6 +538,39 @@
 				}
 
 				http.send(params);
+			}
+
+			function gameStarted() {
+				if (currUsers.length == maxPlayers) {
+					for (var i = 0; i < currUsers.length; i++) {
+						if (currUsers[i].isPlaying == false) {
+							return false;
+						}
+					}
+
+					return true;
+				} else {
+					return false;
+				}
+			}
+
+			function getGameStatus() {
+				var gameId = uri[4];
+
+				var http = new XMLHttpRequest();
+				var url = "http://localhost:10001/_getGameStatus/" + gameId;
+				http.open("GET", url, true);
+
+				console.log(params);
+
+				//capture success response
+				http.onreadystatechange = function() {
+					if (http.readyState == 4 && http.status == 200) {
+						console.log(http.responseText);
+					}
+				}
+
+				http.send();
 			}
 
 			// positioning battleship & clicking battleship
