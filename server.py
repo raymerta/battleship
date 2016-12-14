@@ -144,6 +144,18 @@ def routingHandler(pduResult, conn, addr):
 			component = (200, content, "text/plain")
 			sendResponse(conn, component)
 
+	elif (addr[1] == '_joinGame'):
+		print pduResult.content
+
+		username = pduResult.content.strip().split(";")[1]
+		gameId = pduResult.content.strip().split(";")[0]
+
+		content = joinGame(gameId, username)
+
+		component = (200, content, "text/plain")
+		sendResponse(conn, component)
+
+
 	elif (addr[1] == '_saveGamePosition'):
 		data = pduResult.content.strip()
 		content = saveGamePosition(json.loads(data))
@@ -164,7 +176,7 @@ def routingHandler(pduResult, conn, addr):
 		sendResponse(conn, component)
 
 	elif (addr[1] == '_getGameInfo'):
-		content = getGameInfo(addr[2])
+		content = json.dumps(getGameInfo(addr[2]))
 
 		component = (200, content, "text/plain")
 		sendResponse(conn, component)	
@@ -309,6 +321,14 @@ def createGameRoom(tiles, player, serverId, username):
 		#return user ID number
 		return 1
 
+def joinGame(gameId, username):
+	game = getGameInfo(gameId)
+	sessions = common.getAllSessions()
+
+	#TODO, check if number of players < number of users in the session, if yes, return true and update the session.json page (see save game position for example), if not, return false 
+
+	return False
+
 def saveGamePosition(obj):
 	game = getGamePosition(obj['gameId'])
 	content = getAllGamePosition()
@@ -367,7 +387,7 @@ def getGameInfo(roomId):
 	games = json.loads(common.getAllSessions())
 	for game in games:
 		if (int(game['gameRoomId']) == int(roomId)):
-			return json.dumps(game)
+			return game
 
 def getServerName(url):
 	servers = json.loads(common.getAllServers())
