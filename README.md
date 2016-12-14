@@ -37,43 +37,51 @@ We are copying server part from the first homework + rabbitMQ
 
 # Testing
 
-## Selecting server
+## Selecting server [Done]
 
 - open Chrome browser, type 'http://localhost:10001/'
 - pick one of the servers
 
 expected result: user redirected to insert name page
 
-## Dynamically update server
+## Dynamically update server [Need to refresh the page to update the list]
 
 - open Chrome browser, type 'http://localhost:10001/'
 - remove row from the list or add new list
 
 expected result: without refreshing browser, server updated
 
-## Insert username to server
+## Insert username to server [Done]
 
 - in insert username page, insert new username that never exist before
 - press submit button
 
 expected result: can create username, redirected to game session page
 
-## Insert same username to same server
+## Insert same username to same server [Done]
 
-- in insert username page, insert new username that never exist before
+- in insert username page, insert new username that exist before
 - press submit button
 
-expected result: can't create username, stay in the page with error message
+expected result: can't create username, stay in the page with error message,
+showing the error message 'Given username is already taken. Please choose another.'
 
-## Insert same username to different server
+## Insert same username to different server [Doesn't pass, it shows Given username is already taken. Please choose another.]
 
 - in insert username page, insert new username that never exist before
 - press submit button
 
 expected result: can create username, redirected to game session page
 
-## create new game 
+## create new game [Done] 
 
+- open Chrome browser, type 'http://localhost:10001/'
+- pick one of the servers
+- insert unique username
+- select 'New Game'
+- Specefiy Number of players/ Game Tile Size and click Sumbit
+
+Expected result: game started
 
 ## select existing game
 
