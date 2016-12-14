@@ -35,6 +35,14 @@ Content-type: %s
 
 %s
 """
+
+responseHeaders[422] =\
+"""HTTP/1.0 422 Unprocessable Entity
+Server: ws30
+Content-type: %s
+
+%s
+"""
 # TODO Handling local CSS and Javascript file
 
 # setting mime types
@@ -128,6 +136,11 @@ def routingHandler(pduResult, conn, addr):
 		if (isDuplicate == False):
 			content = 'http://localhost:10001/session/%s/%s' % (serverUrl, username)
 			component = (200, content, "text/plain")
+			sendResponse(conn, component)
+
+		else:
+			content = "Given username is already in use."
+			component = (422, content, "text/plain")
 			sendResponse(conn, component)
 
 

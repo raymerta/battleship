@@ -12,7 +12,7 @@
 		</div>
 		<div class="seabackground">
 			<div class="gamecontainer">
-				
+
 				<p>Server selected:</p>
 
 				<h1 class="servername" id="serverName"></h1>
@@ -23,6 +23,9 @@
 
 				<br/>
 				<a href="#"><div class="gamebutton" onclick="submitName()">Submit</div></a>
+			</div>
+			<div id="usernameTaken" class="errorbox" style="visibility: hidden;">
+				Given username is already taken. Please choose another.
 			</div>
 		</div>
 
@@ -64,6 +67,9 @@
 				http.onreadystatechange = function() {
 					if (http.readyState == 4 && http.status == 200) {
 						window.location = http.responseText.trim();
+					}
+					else if (http.status == 422) {
+						document.getElementById("usernameTaken").style.visibility = "visible";
 					}
 				}
 
