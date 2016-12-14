@@ -458,7 +458,7 @@ def getServerName(url):
 		if (server['serverUrl'] == url):
 			return json.dumps(server)
 
-def getGameUsernamePosition(gameId, username)
+def getGameUsernamePosition(gameId, username):
 	content = getAllGamePosition()
 
 	#TODO return object of username position in requested gameRoomId , the object will be turned to json string later

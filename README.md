@@ -126,6 +126,8 @@ expected result: can create username, redirected to game session page
 ## nice to have 
 
 - [session] dynamic game session name [done]
+- [username] check error when put duplicate name, it requires multiple clicking
+- [creategame] limit number of player and tile size
 - [game] change already positioned ship in the game
 - [game] detect ship collision placement
 - [game] change button color if all ship already placed
