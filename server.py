@@ -75,6 +75,8 @@ def routingHandler(pduResult, conn, addr):
 
 	# remove beginning /
 	addr = pduResult.uri.split('/')
+	print >> sys.stderr, "printing addr 1:"
+	print >> sys.stderr, addr[1]
 
 	content = ''
 	fsource = ''
@@ -153,6 +155,7 @@ def routingHandler(pduResult, conn, addr):
 		sendResponse(conn, component)
 
 	elif (addr[1] == '_getGameStatus'):
+		print >> sys.stderr, "server is called for Game Status"
 		roomId = addr[2]
 		content = getGameStatus(roomId)
 
@@ -260,6 +263,7 @@ def parseRequest(conn):
 	return PDU(data)
 
 def handler(conn, addr):
+	print >> sys.stderr, 'ENTER HandleR'
 	# parsing uri request
 	pduResult = parseRequest(conn)
 
@@ -403,14 +407,24 @@ def updateStatusUser(status, username, roomId):
 
 
 def getGameStatus(roomId):
+	print >> sys.stderr, "getGameStatus called"
+	game = getGameInfo(roomId)
+	if (len(game["users"]) != int(game["numPlayers"])):
+		print >> sys.stderr, "max players not started"
+		return False
+	for user in game["users"]:
+		if (user["isPlaying"] == False):
+			print >> sys.stderr, "there is a user who is not playing"
+			return False
 
-	#TODO return True if all users in this roomID is already in isPlaying : True mode and number of users is equal to number of maximum players, return False otherwise
-
+	print >> sys.stderr, "game is ready"
 	return True
 
 def saveGamePosition(obj):
 	game = getGamePosition(obj['gameId'])
 	content = getAllGamePosition()
+
+
 
 	if (content != ''):
 		games = json.loads(content)
@@ -448,7 +462,7 @@ def saveGamePosition(obj):
 
 	else :
 
-		print >> sys.stderr, "game.json is empty"
+		print >> sys.stderr, "game.json is empty, so creating it"
 
 		data = [{"gameRoomId" : obj['gameId'], "users" : [{ "username" : obj['username'], "position" : obj['ships'] }] }]
 		dataObject = json.dumps(data)
