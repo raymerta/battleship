@@ -20,7 +20,9 @@ http://stackoverflow.com/questions/3028899/what-is-the-difference-between-remote
 ## running the game itself // need to be updated
 
 - open terminal
-- run 'python server.py'
+- run rabbitMQ server and turn on web stomp plugin 
+- run 'python server.py' 
+- run 'python game.py'
 - open Chrome browser, type 'http://localhost:10001/'
 
 Notes: 

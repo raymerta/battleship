@@ -2,5 +2,7 @@
 	{"serverName" : "Royal Navy", "serverUrl" : "royal-navy", "serverId" : 1},
 	{"serverName" : "Marina Militare", "serverUrl" : "marina-militare",  "serverId" : 2},
 	{"serverName" : "US Navy", "serverUrl" : "us-navy",  "serverId" : 3},
-	{"serverName" : "Eesti Merevägi", "serverUrl" : "eesti-merevagi",  "serverId" : 4}
+	{"serverName" : "Eesti Merevägi", "serverUrl" : "eesti-merevagi",  "serverId" : 4},
+	{"serverName" : "Russian Navy", "serverUrl" : "russian-navy",  "serverId" : 6},
+	{"serverName" : "Kaijō Jieitai", "serverUrl" : "kaijo-jieitai",  "serverId" : 5}
 ]
