@@ -83,16 +83,19 @@
 				//capture success response
 				http.onreadystatechange = function() {
 					if (http.readyState == 4 && http.status == 200) {
-						game = JSON.parse(http.responseText)
-						console.log(game);
 
-						var gameList = '';
-						for (var i = 0; i < game.length; i++) {
-							var gName = game[i].roomName;
-							gameList = gameList + '<a href="http://localhost:10001/game/' + server.serverName + '/' + uri[3] + '/' + game[i].gameRoomId + '"><div class="gamebutton">' + game[i].roomName + '</div>';
+						if (http.responseText != "") {
+							game = JSON.parse(http.responseText)
+							console.log(game);
+
+							var gameList = '';
+							for (var i = 0; i < game.length; i++) {
+								var gName = game[i].roomName;
+								gameList = gameList + '<a href="http://localhost:10001/game/' + server.serverName + '/' + uri[3] + '/' + game[i].gameRoomId + '"><div class="gamebutton">' + game[i].roomName + '</div>';
+							}
+
+							document.getElementById("gameList").innerHTML = gameList;
 						}
-
-						document.getElementById("gameList").innerHTML = gameList;
 					}
 				}
 
@@ -141,7 +144,7 @@
 			var mq_url = 'http://localhost:15674/stomp';
 
 			    //topic name
-			var mq_queue = "/topic/games-" + server.serverUrl;
+			var mq_queue = "/topic/game-" + uri[2];
 			var mq_ctype = {"content-type":"text/plain"};
 
 			// This is where we print incomoing messages
@@ -151,6 +154,7 @@
 			function on_connect() {
 				console.log('connected');
 				console.log(client);
+				console.log(mq_queue);
 			  	client.subscribe(mq_queue, on_message);
 			}
 
@@ -163,7 +167,18 @@
 			// This will be called upon arrival of a message
 			function on_message(m) {
 			  	console.log('message received');
-				console.log(m.body.trim());	
+
+				game = JSON.parse(m.body.trim())
+				console.log(game);
+
+				var gameList = '';
+				for (var i = 0; i < game.length; i++) {
+					var gName = game[i].roomName;
+					gameList = gameList + '<a href="http://localhost:10001/game/' + server.serverName + '/' + uri[3] + '/' + game[i].gameRoomId + '"><div class="gamebutton">' + game[i].roomName + '</div>';
+				}
+
+				document.getElementById("gameList").innerHTML = gameList;
+
 			}
 
 			// Create a client
