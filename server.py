@@ -377,13 +377,31 @@ def joinGame(gameId, username):
 		print >> sys.stderr, "player space unavailable"
 		return False
 
-	#TODO, check if number of players < number of users in the session, if yes, return true and update the session.json page (see save game position for example), if not, return false
-
 def updateStatusUser(status, username, roomId):
 
 	#TODO update this username in this roomID session.js to isPlaying : true. be careful with all the json formatting. return True if you are able to format it, return False for every problem
+	sessions = json.loads(common.getAllSessions())
+	usernameFoundAndChanged = False
+	for session in sessions:
+		if (int(session['gameRoomId']) == int(roomId)):
+			for user in session['users']:
+				if (user['username'] == username):
+					user['isPlaying'] = true
+					usernameFoundAndChanged = True
 
-	return True
+	sessionData = json.dumps(sessions)
+	fsource = 'sessions.json'
+	f = open(fsource, 'w')
+	f.write(sessionData)
+	f.close()
+
+	if (usernameFoundAndChanged):
+		print >> sys.stderr, "User\'s status is updated."
+		return True
+	else:
+		print >> sys.stderr, "User\'s status failure."
+		return False
+
 
 def getGameStatus(roomId):
 
