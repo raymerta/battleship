@@ -159,7 +159,7 @@ def routingHandler(pduResult, conn, addr):
 		component = (200, content, "text/plain")
 		sendResponse(conn, component)
 
-	elif (addr[1] == '_getUsernamePosition'): 
+	elif (addr[1] == '_getUsernamePosition'):
 		roomId = addr[2]
 		username = addr[3]
 		content = getGameUsernamePosition(roomId, username)
@@ -189,7 +189,7 @@ def routingHandler(pduResult, conn, addr):
 		content = joinGame(gameId, username)
 
 		component = (200, content, "text/plain")
-		sendResponse(conn, component)		
+		sendResponse(conn, component)
 
 
 	elif (addr[1] == '_saveGamePosition'):
@@ -361,7 +361,7 @@ def joinGame(gameId, username):
 	game = getGameInfo(gameId)
 	sessions = common.getAllSessions()
 	if (len(game["users"]) < game["numPlayers"]):
-		userJoiningGame = {"username": username, "isWinning": False, "isTurn": False, "isDefeated": False}
+		userJoiningGame = {"username": username, "isWinning": False, "isTurn": False, "isDefeated": False, "isPlaying": False}
 		games = json.loads(sessions)
 		for game in games:
 			if (int(game['gameRoomId']) == int(gameId)):
@@ -481,7 +481,7 @@ def getGameUsernamePosition(gameId, username):
 
 	#TODO return object of username position in requested gameRoomId , the object will be turned to json string later
 
-	return content 
+	return content
 
 def getGamePosition(gameId):
 	content = getAllGamePosition()
