@@ -344,9 +344,24 @@ def createGameRoom(tiles, player, serverId, username):
 def joinGame(gameId, username):
 	game = getGameInfo(gameId)
 	sessions = common.getAllSessions()
+	if (len(game["users"]) < game["numPlayers"]):
+		userJoiningGame = {"username": username, "isWinning": False, "isTurn": False, "isDefeated": False}
+		games = json.loads(sessions)
+		for game in games:
+			if (int(game['gameRoomId']) == int(gameId)):
+				game["users"].append(userJoiningGame)
+		dataObject = json.dumps(games)
+		fsource = 'sessions.json'
+		f = open(fsource, 'w')
+		f.write(dataObject)
+		f.close()
+		print >> sys.stderr, "player space available"
+		return True
+	else:
+		print >> sys.stderr, "player space unavailable"
+		return False
 
-	#TODO, check if number of players < number of users in the session, if yes, return true and update the session.json page (see save game position for example), if not, return false 
-	return True
+	#TODO, check if number of players < number of users in the session, if yes, return true and update the session.json page (see save game position for example), if not, return false
 
 def updateStatusUser(status, username, roomId):
 
@@ -432,13 +447,13 @@ def getGamePosition(gameId):
 
 	if (content != ''):
 		data = json.loads(content)
-		
+
 		for datum in data:
 			if (int(datum['gameRoomId']) == int(gameId)):
 				return datum
- 
+
 		return None
-	else: 
+	else:
 		return None
 
 def getAllGamePosition():
