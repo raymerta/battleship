@@ -138,6 +138,8 @@
 				http.send(params);	
 			}
 
+			//Rabbit MQ Place
+
 			// Use SockJS
 			Stomp.WebSocketClass = SockJS;
 
@@ -188,9 +190,7 @@
 			// Create a client
 			var client = Stomp.client(mq_url);
 
-			window.onload = function () {
-				client.connect(mq_username, mq_password, on_connect, on_connect_error, mq_vhost);
-			}
+			client.connect(mq_username, mq_password, on_connect, on_connect_error, mq_vhost);
 
 		</script>
 

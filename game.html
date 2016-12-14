@@ -2,8 +2,10 @@
 	<head>
 		<title>BATTLESHIP</title>
 		<link rel="stylesheet" type="text/css" href="http://parallemon.com/battleship/battleshipstyle.css">
-		<!-- <link rel="stylesheet" type="text/css" href="battleshipstyle.css"> -->
 		<link href="https://fonts.googleapis.com/css?family=Roboto+Slab:100,300,400,700" rel="stylesheet">
+
+		<script type="text/javascript" src="http://parallemon.com/battleship/sockjs-0.3.js"></script>
+		<script type="text/javascript" src="http://parallemon.com/battleship/stomp.js"></script>
 	</head>
 
 	<body>
@@ -51,7 +53,7 @@
 						<td><span id="pPlayer"></span> players ( <span id="pInGame"></span> in game )</td>
 					</tr>
 				</table>
-				<a href="#" class="newgamecancel">WATCH</a><a href="#" class="newgamesubmit" id="pJoin">JOIN</a>
+				<a href="#" class="newgamecancel" onclick="watch()">WATCH</a><a href="#" class="newgamesubmit" id="pJoin">JOIN</a>
 				<div class="clearfix"></div>
 			</div>
 		</div>
@@ -59,6 +61,9 @@
 		<script type="text/javascript">
 
 			var mapSize = 10;
+			var isEditing = true;
+			var isWatching = false;
+			var isPlaying = false;
 
 			var server = '';
 			var uri = window.location.pathname.split('/');
@@ -123,6 +128,9 @@
 								document.getElementById("placeShips").style.display = "none";
 								document.getElementById("notifContent").innerHTML = "Game Ready";
 								document.getElementById("saveGame").style.display = "none";
+								isEditing = false;
+								isWatching = true;
+
 							} else {
 								document.getElementById("blackDrop").style.display = "none";
 							}
@@ -131,6 +139,11 @@
 				}
 
 				http.send();
+			}
+
+			function watch() {
+				isWatching = true;
+				document.getElementById("blackDrop").style.display = "none";
 			}
 
 			function getUserInfo(users, username) {
@@ -176,6 +189,7 @@
 
 			var firstPos = "";
 			var secondPos = [];
+			var shipCoor = [];
 
 			function generateMap() {
 				document.getElementById("map").style.width = (mapSize * 54) + "px";
@@ -244,11 +258,8 @@
 				}
 			}
 
-			// positioning battleship
-			function seaPos(pos) {
-
+			function placementLogic(pos) {
 				if (shipSelected != "") {
-
 					if (secondPos.length > 0) {
 						if (secondPos.indexOf(pos) > -1) {
 
@@ -260,6 +271,7 @@
 
 							// put color in selection
 							document.getElementById(pos).style.background = ship[shipSelected].color;
+							shipCoor.push(pos);
 
 							// draw the rest of ship body
 							if (ship[shipSelected].size - 2 > 0) {
@@ -269,6 +281,7 @@
 
 								for (var i = 0; i < ship[shipSelected].size - 2; i++) {
 									document.getElementById(curr).style.background = ship[shipSelected].color;
+									shipCoor.push(curr);
 									curr = curr + diff;
 								}
 							}
@@ -294,6 +307,7 @@
 						}
 					} else {
 						document.getElementById(pos).style.background = ship[shipSelected].color;
+						shipCoor.push(pos);
 						
 						if (ship[shipSelected].size > 1) {
 							firstPos = pos;
@@ -316,11 +330,77 @@
 				}
 			}
 
+			function clickingPos() {
+				
+			}
 
 			function saveGame() {
 				document.getElementById("placeShips").style.display = "none";
 				document.getElementById("notifContent").innerHTML = "Game Ready";
 				document.getElementById("saveGame").style.display = "none";
+				isEditing = false;
+				isWatching = true;
+				console.log(shipCoor);
+			}
+
+			// rabbitmq
+
+			// Use SockJS
+			Stomp.WebSocketClass = SockJS;
+
+			// Connection parameters
+			var mq_username = "guest";
+			var mq_password = "guest";
+			var mq_vhost = "/";
+			var mq_url = 'http://localhost:15674/stomp';
+
+			    //topic name
+			var mq_queue = "/topic/play-" + uri[4];
+			var mq_ctype = {"content-type":"text/plain"};
+
+			// This is where we print incomoing messages
+			var output;
+
+			// This will be called upon successful connection
+			function on_connect() {
+				console.log('connected');
+				console.log(client);
+				console.log(mq_queue);
+			  	client.subscribe(mq_queue, on_message);
+			}
+
+			// This will be called upon a connection error
+			function on_connect_error() {
+				console.log(client);
+				console.log("connection error");
+			}
+
+			// This will be called upon arrival of a message
+			function on_message(m) {
+			  	console.log('message received');
+			  	console.log(m.body.trim());
+			}
+
+			// Create a client
+			var client = Stomp.client(mq_url);
+
+			client.connect(mq_username, mq_password, on_connect, on_connect_error, mq_vhost);
+
+
+			// positioning battleship & clicking battleship
+			function seaPos(pos) {
+				if (isEditing == true) {
+					placementLogic(pos);	
+				}
+
+				if (isPlaying == true) {
+
+				}
+
+				if (isWatching == true) {
+					console.log("clicking");
+					client.send(mq_queue, {"content-type":"text/plain"}, pos);
+				}
 			}
 
 		</script>
