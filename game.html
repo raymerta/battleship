@@ -236,6 +236,7 @@
 			}
 
 			function getUsernamePosition() {
+				alert("checking");
 				var http = new XMLHttpRequest();
 				var url = "http://localhost:10001/_getUsernamePosition/" + uri[4] + '/' + uri[3];
 				http.open("GET", url);
@@ -574,7 +575,8 @@
 
 				var http = new XMLHttpRequest();
 				var url = "http://localhost:10001/_getGameStatus/" + gameId;
-				// alert(url)
+				 f
+				 // alert(url)
 				http.open("GET", url, true);
 
 				// console.log(params);

@@ -130,6 +130,11 @@ def routingHandler(pduResult, conn, addr):
 	##########
 
 	elif (addr[1] == '_insertname'):
+
+		## DELETE LINE BELOW
+		print >> sys.stderr, 'server is starting on %s port %s' % serverAddress
+
+
 		username = pduResult.content.strip().split(";")[0]
 		serverId = pduResult.content.strip().split(";")[1]
 		serverUrl = pduResult.content.strip().split(";")[2]
@@ -490,11 +495,14 @@ def getServerName(url):
 			return json.dumps(server)
 
 def getGameUsernamePosition(gameId, username):
-	content = getAllGamePosition()
+	content = getGamePosition(gameId)
+	for user in content['users']:
+		if user['username'] == username:
+			print >> sys.stderr, 'returning user\'s ship positions:'
+			print >> sys.stderr, str(user['position'])
+			return user['position']
 
-	#TODO return object of username position in requested gameRoomId , the object will be turned to json string later
-
-	return content
+	return None
 
 def getGamePosition(gameId):
 	content = getAllGamePosition()
