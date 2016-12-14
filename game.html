@@ -19,7 +19,7 @@
 				
 				<p>Server selected : <span id="serverName" class="emphasize"></span> - Game : </p>
 
-				<h1 class="servername" id="gameName">Baltic Sea 1</h1>
+				<h1 class="servername" id="gameName"></h1>
 
 				<div id="placeShips">
 				<div class="ship battleship" id="battleship" onclick="selectShip('battleship')">Battleship (1)</div> 
@@ -34,17 +34,40 @@
 		<div id="map"></div>
 
 		<div class="clearfix"></div>
-
 		
 		<a href="#" id="saveGame"><div class="gamebutton" onclick="saveGame()">Start Game</div></a>
+
+		<div class="blackdrop" id="blackDrop">
+			<div class="newgamebox">
+				<p style="margin-bottom: 10px">Game Information:</p>
+				<h1 id="popupGameName"></h1>
+				<table>
+					<tr>
+						<td>Created by :</td>
+						<td id="pCreator"></td>
+					</tr>
+					<tr>
+						<td>Maximum Players :</td>
+						<td><span id="pPlayer"></span> players ( <span id="pInGame"></span> in game )</td>
+					</tr>
+				</table>
+				<a href="#" class="newgamecancel">WATCH</a><a href="#" class="newgamesubmit" id="pJoin">JOIN</a>
+				<div class="clearfix"></div>
+			</div>
+		</div>
 
 		<script type="text/javascript">
 
 			var mapSize = 10;
-			var numPlayer = 2;
 
 			var server = '';
 			var uri = window.location.pathname.split('/');
+
+			var messages = [];
+			messages[0] = "In Editing Mode";
+			messages[1] = "Game Ready, Waiting for player";
+			messages[2] = "Game is Running, Current Turn : ";
+
 
 			function getServerDetail() {
 				var http = new XMLHttpRequest();
@@ -56,6 +79,7 @@
 					if (http.readyState == 4 && http.status == 200) {
 						server = JSON.parse(http.responseText);
 						document.getElementById("serverName").innerHTML = server.serverName;
+						getGameInfo();
 					}
 				}
 
@@ -77,8 +101,31 @@
 							console.log(game);
 
 							mapSize = game.size;
+							var d = new Date(0); 
+							d.setUTCSeconds(game.roomCreated);
+
 							document.getElementById("gameName").innerHTML = game.roomName;
+							document.getElementById("popupGameName").innerHTML = game.roomName;
+							document.getElementById("pCreator").innerHTML = game.creator;
+							document.getElementById("pPlayer").innerHTML = game.numPlayers;
+							document.getElementById("pInGame").innerHTML = game.users.length;
+							
+							//generate Map
 							generateMap();
+
+							if (game.users.length == game.numPlayers) {
+								document.getElementById("pJoin").style.display = "none";
+							}
+
+							//isJoined or not, if yes toggle off editing mode
+							var user = getUserInfo(game.users, uri[3]);
+							if (user == '') {
+								document.getElementById("placeShips").style.display = "none";
+								document.getElementById("notifContent").innerHTML = "Game Ready";
+								document.getElementById("saveGame").style.display = "none";
+							} else {
+								document.getElementById("blackDrop").style.display = "none";
+							}
 						}
 					}
 				}
@@ -86,7 +133,15 @@
 				http.send();
 			}
 
-			getGameInfo();
+			function getUserInfo(users, username) {
+				for (var i = 0; i < users.length; i++) {
+					if (users[i].username == username) {
+						return users[i];
+					}
+				}
+
+				return '';
+			}
 
 			var shipSelected = '';
 			var ship = new Array();

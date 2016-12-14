@@ -277,7 +277,7 @@ def createGameRoom(tiles, player, serverId, username):
 		sessions = json.loads(content)
 		roomId = len(sessions) + 1
 
-		data = {"serverId" : serverId, "numPlayers" : player, "size" : tiles, "creator": username , "roomName": roomName, "roomCreated": int(time.time()), "isPlaying": False, "isEnded" : False , "gameRoomId" : roomId, "users": [{"username": username, "isTurn" : False, "isDefeated" : False, "isWinning" : False }] }
+		data = {"serverId" : serverId, "numPlayers" : player, "size" : tiles, "creator": username , "roomName": roomName, "roomCreated": int(time.time()), "isPlaying": False, "isEnded" : False , "gameRoomId" : roomId, "users": [{"username": username, "isTurn" : False, "isDefeated" : False, "isWinning" : False, "isEditing" : True }] }
 		sessions.append(data)
 
 		dataObject = json.dumps(sessions)
@@ -291,7 +291,7 @@ def createGameRoom(tiles, player, serverId, username):
 
 	else:
 		#empty json file, proceed to create initial content
-		data = [{"serverId" : serverId, "numPlayers" : player, "size" : tiles, "creator": username , "roomName": roomName, "roomCreated": int(time.time()), "isPlaying": False, "isEnded" : False , "gameRoomId" : 1, "users": [{"username": username, "isTurn" : False, "isDefeated" : False, "isWinning" : False }] }]
+		data = [{"serverId" : serverId, "numPlayers" : player, "size" : tiles, "creator": username , "roomName": roomName, "roomCreated": int(time.time()), "isPlaying": False, "isEnded" : False , "gameRoomId" : 1, "users": [{"username": username, "isTurn" : False, "isDefeated" : False, "isWinning" : False, "isEditing" : True }] }]
 		dataObject = json.dumps(data)
 
 		fsource = 'sessions.json'

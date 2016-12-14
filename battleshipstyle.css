@@ -163,11 +163,11 @@ a.newgamecancel {
 }
 
 .blackdrop {
-	position: absolute;
     top: 0;
     background: rgba(0, 0, 0, 0.8);
     width: 100%;
     height: 100%;
+    position: fixed;
 }
 
 .ship {
@@ -245,4 +245,8 @@ a:hover .gamebutton{
 	text-decoration: none;
 	-webkit-box-shadow: 0 10px 10px 1px #132937;
 	box-shadow: 0 10px 10px 1px #132937;
+}
+
+.gamebutton.active {
+	background: url("http://parallemon.com/battleship/btn-green.png") no-repeat;
 }
