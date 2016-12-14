@@ -333,8 +333,32 @@
 				}
 			}
 
-			function clickingPos() {
-				
+			function savingPosition() {
+				var username = uri[3];
+				var gameId = uri[4];
+				var data = { "gameId" : gameId, "username" : username, "ships" : [
+						{ "shipName" : "battleship" , "info" : ship['battleship']},
+						{ "shipName" : "destroyer" , "info" : ship['destroyer']},
+						{ "shipName" : "cruiser" , "info" : ship['cruiser']},
+						{ "shipName" : "submarine" , "info" : ship['submarine']},
+					] 
+				};
+
+				var http = new XMLHttpRequest();
+				var url = "http://localhost:10001/_saveGamePosition/";
+				var params = JSON.stringify(data);
+				http.open("POST", url, true);
+
+				console.log(params);
+
+				//capture success response
+				http.onreadystatechange = function() {
+					if (http.readyState == 4 && http.status == 200) {
+						alert("position saved!");
+					}
+				}
+
+				http.send(params);
 			}
 
 			function saveGame() {
@@ -344,6 +368,8 @@
 				isEditing = false;
 				isPlaying = true;
 				console.log(ship);
+				savingPosition();
+
 			}
 
 			// rabbitmq

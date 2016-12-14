@@ -144,6 +144,13 @@ def routingHandler(pduResult, conn, addr):
 			component = (200, content, "text/plain")
 			sendResponse(conn, component)
 
+	elif (addr[1] == '_saveGamePosition'):
+		data = pduResult.content.strip()
+		content = saveGamePosition(json.loads(data))
+
+		component = (200, content, "text/plain")
+		sendResponse(conn, component)
+
 	elif (addr[1] == '_getGameRooms'):
 		content = common.getSessionServer(addr[2])
 
@@ -302,13 +309,64 @@ def createGameRoom(tiles, player, serverId, username):
 		#return user ID number
 		return 1
 
+def saveGamePosition(obj):
+	game = getGamePosition(obj['gameId'])
+	content = getAllGamePosition()
+
+	if (content != ''):
+		games = json.loads(content)
+		if (game != None):
+
+			print >> sys.stderr, "game.json add more users"
+
+			data = { "username" : obj['username'], "position" : obj['ships'] }
+			game['users'].append(data)
+
+			for room in games:
+				if (int(room['gameRoomId']) == int(obj['gameId'])):
+					room['users'] = game['users']
+
+			dataObject = json.dumps(games)
+
+			fsource = 'game.json'
+			f = open(fsource, 'w')
+			f.write(dataObject)
+			f.close()
+
+		else:
+
+			print >> sys.stderr, "game.json room id is not exist"
+
+			data = {"gameRoomId" : obj['gameId'], "users" : [{ "username" : obj['username'], "position" : obj['ships'] }] }
+			games.append(data)
+
+			dataObject = json.dumps(games)
+
+			fsource = 'game.json'
+			f = open(fsource, 'w')
+			f.write(dataObject)
+			f.close()
+
+	else :
+
+		print >> sys.stderr, "game.json is empty"
+
+		data = [{"gameRoomId" : obj['gameId'], "users" : [{ "username" : obj['username'], "position" : obj['ships'] }] }]
+		dataObject = json.dumps(data)
+
+		fsource = 'game.json'
+		f = open(fsource, 'w')
+		f.write(dataObject)
+		f.close()
+
+
+	return True
+
 def getGameInfo(roomId):
 	print roomId
 	games = json.loads(common.getAllSessions())
 	for game in games:
-		print game
 		if (int(game['gameRoomId']) == int(roomId)):
-			print game
 			return json.dumps(game)
 
 def getServerName(url):
@@ -318,6 +376,27 @@ def getServerName(url):
 		if (server['serverUrl'] == url): 
 			return json.dumps(server)
 
+def getGamePosition(gameId):
+	content = getAllGamePosition()
+
+	if (content != ''):
+		data = json.loads(content)
+		
+		for datum in data:
+			if (int(datum['gameRoomId']) == int(gameId)):
+				return datum
+ 
+		return None
+	else: 
+		return None
+
+def getAllGamePosition():
+	fsource = 'game.json'
+	f = open(fsource, 'r')
+	content = f.read()
+	f.close()
+
+	return content
 
 def getAllUsers():
 	fsource = 'users.json'
