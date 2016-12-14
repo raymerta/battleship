@@ -379,14 +379,13 @@ def joinGame(gameId, username):
 
 def updateStatusUser(status, username, roomId):
 
-	#TODO update this username in this roomID session.js to isPlaying : true. be careful with all the json formatting. return True if you are able to format it, return False for every problem
 	sessions = json.loads(common.getAllSessions())
 	usernameFoundAndChanged = False
 	for session in sessions:
 		if (int(session['gameRoomId']) == int(roomId)):
 			for user in session['users']:
 				if (user['username'] == username):
-					user['isPlaying'] = true
+					user['isPlaying'] = True
 					usernameFoundAndChanged = True
 
 	sessionData = json.dumps(sessions)
