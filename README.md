@@ -9,26 +9,27 @@ Yes, it is. A web service is a specific implementation of RPC. At its lowest lev
 http://stackoverflow.com/questions/3028899/what-is-the-difference-between-remote-procedure-call-and-web-service
 
 
-# How to run the game? 
+# How to run the game?
 
 ## Installing RabbitMQ + WebStomp + Pika
 
 - install rabbitMQ (https://www.rabbitmq.com/download.html)
 - install web stomp (https://www.rabbitmq.com/web-stomp.html)
-- install Pika (http://pika.readthedocs.io/en/0.10.0/) 
+- install Pika (http://pika.readthedocs.io/en/0.10.0/)
 
 ## running the game itself // need to be updated
 
 - open terminal
-- run rabbitMQ server and turn on web stomp plugin 
-- run 'python server.py' 
+- run rabbitMQ server: 'sudo invoke-rc.d rabbitmq-server start'
+- turn on web stomp plugin: 'sudo rabbitmq-plugins enable rabbitmq_web_stomp'
+- run 'python server.py'
 - run 'python game.py'
 - open Chrome browser, type 'http://localhost:10001/'
 
-Notes: 
+Notes:
 
 - ensure internet is connected to load assets (images, fonts, style, etc)
-- prefer use Chrome browser for all players 
+- prefer use Chrome browser for all players
 - clear all json files for better result except servers.json
 
 # Development Strategy
@@ -73,7 +74,7 @@ showing the error message 'Given username is already taken. Please choose anothe
 
 expected result: can create username, redirected to game session page
 
-## create new game [Done] 
+## create new game [Done]
 
 - open Chrome browser, type 'http://localhost:10001/'
 - pick one of the servers
@@ -90,19 +91,19 @@ Expected result: Game started and the position saved.
 - open Chrome browser, type 'http://localhost:10001/'
 - pick one of the servers
 - insert unique username
-- select a server 
+- select a server
 - Click Join
 - Select [Buttleship/Cruiser/Destroyer/Submarine] + the position
 - wait for the master player to start the battle
 
-Expected result: New player joined the game if there is free space, and can select the buttleship and the position. 
+Expected result: New player joined the game if there is free space, and can select the buttleship and the position.
 
 ## select existing game, game is running , and choose cancel
 
 - open Chrome browser, type 'http://localhost:10001/'
 - pick one of the servers
 - insert unique username
-- select a server 
+- select a server
 - Click Join and start playing
 - Click Cancel
 
@@ -142,7 +143,7 @@ Expected results: - Player 2 can't shoot before Player 1
 - ensure testing crossbrowser connectivity
 
 
-# TO DO: 
+# TO DO:
 
 ## important
 
@@ -173,7 +174,7 @@ Expected results: - Player 2 can't shoot before Player 1
 - notification for player joining
 - notification for player turn
 
-## nice to have 
+## nice to have
 
 - [session] dynamic game session name [done]
 - [username] check error when put duplicate name, it requires multiple clicking
@@ -192,7 +193,7 @@ Expected results: - Player 2 can't shoot before Player 1
 - Once user has joined the game server, it can either create a new game session or join existing one. [done]
 - In case the user wants to create a new game session, he/she has need to provide the desired size of the battle field, then the new game field is created and the user has to position his ships on flat map (no obstacles, just water). Once the ships are positioned, the creator player should wait for someone to join his game session. The creator player must be notified each time new player joined with his game session. Once the creator player is satisfied with the number of players who have joined, he may trigger the start of a battle.[done]
 - In case users want to join the existing game session, he/she has to position his ships and wait for the master player to start the battle. [done]
-- Once the game session has a battle running the game server must preserve the order of players, allowing them to shoot one after the other. Each time the shoot is committed by a player, the server must notify the next one of his turn to shoot 
+- Once the game session has a battle running the game server must preserve the order of players, allowing them to shoot one after the other. Each time the shoot is committed by a player, the server must notify the next one of his turn to shoot
 - Once the game session has a battle running the game server has to check the end-game condition, which is the situation where all the ships standing on the battlefield belong to only one player.
 - Once the shoot is done by player the server must check the hit-conditions
   – if any ships were hit it should be visible for the player who triggered the shoot
@@ -210,8 +211,7 @@ Expected results: - Player 2 can't shoot before Player 1
   – in case only one player is involved in the game and the others already left, the game session should end
 - Player should be able to disconnect and connect again without loosing his game session
   – disconnecting should result in leaving the game session
-  – in case the player did disconnect without leaving and he/she is not connected back for long time, then the creator player has liberty to withdraw the concerned player 
+  – in case the player did disconnect without leaving and he/she is not connected back for long time, then the creator player has liberty to withdraw the concerned player
   – in case the creator player did disconnect without leaving and he/she is not connecting back long enough, the server selects the new owner among the remaining players
     - the previous creator-player can still connect back with lost ownership of the game session
   – in case game session was finished at the time the user is reconnecting, he/she should be informed and suggested to create or join another session
-
