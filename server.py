@@ -159,6 +159,25 @@ def routingHandler(pduResult, conn, addr):
 			component = (200, content, "text/plain")
 			sendResponse(conn, component)
 
+	elif (addr[1] == '_joinGame'):
+		print pduResult.content
+
+		username = pduResult.content.strip().split(";")[1]
+		gameId = pduResult.content.strip().split(";")[0]
+
+		content = joinGame(gameId, username)
+
+		component = (200, content, "text/plain")
+		sendResponse(conn, component)
+
+
+	elif (addr[1] == '_saveGamePosition'):
+		data = pduResult.content.strip()
+		content = saveGamePosition(json.loads(data))
+
+		component = (200, content, "text/plain")
+		sendResponse(conn, component)
+
 	elif (addr[1] == '_getGameRooms'):
 		content = common.getSessionServer(addr[2])
 
@@ -172,7 +191,7 @@ def routingHandler(pduResult, conn, addr):
 		sendResponse(conn, component)
 
 	elif (addr[1] == '_getGameInfo'):
-		content = getGameInfo(addr[2])
+		content = json.dumps(getGameInfo(addr[2]))
 
 		component = (200, content, "text/plain")
 		sendResponse(conn, component)
@@ -318,14 +337,73 @@ def createGameRoom(tiles, player, serverId, username):
 		#return user ID number
 		return 1
 
+def joinGame(gameId, username):
+	game = getGameInfo(gameId)
+	sessions = common.getAllSessions()
+
+	#TODO, check if number of players < number of users in the session, if yes, return true and update the session.json page (see save game position for example), if not, return false 
+
+	return False
+
+def saveGamePosition(obj):
+	game = getGamePosition(obj['gameId'])
+	content = getAllGamePosition()
+
+	if (content != ''):
+		games = json.loads(content)
+		if (game != None):
+
+			print >> sys.stderr, "game.json add more users"
+
+			data = { "username" : obj['username'], "position" : obj['ships'] }
+			game['users'].append(data)
+
+			for room in games:
+				if (int(room['gameRoomId']) == int(obj['gameId'])):
+					room['users'] = game['users']
+
+			dataObject = json.dumps(games)
+
+			fsource = 'game.json'
+			f = open(fsource, 'w')
+			f.write(dataObject)
+			f.close()
+
+		else:
+
+			print >> sys.stderr, "game.json room id is not exist"
+
+			data = {"gameRoomId" : obj['gameId'], "users" : [{ "username" : obj['username'], "position" : obj['ships'] }] }
+			games.append(data)
+
+			dataObject = json.dumps(games)
+
+			fsource = 'game.json'
+			f = open(fsource, 'w')
+			f.write(dataObject)
+			f.close()
+
+	else :
+
+		print >> sys.stderr, "game.json is empty"
+
+		data = [{"gameRoomId" : obj['gameId'], "users" : [{ "username" : obj['username'], "position" : obj['ships'] }] }]
+		dataObject = json.dumps(data)
+
+		fsource = 'game.json'
+		f = open(fsource, 'w')
+		f.write(dataObject)
+		f.close()
+
+
+	return True
+
 def getGameInfo(roomId):
 	print roomId
 	games = json.loads(common.getAllSessions())
 	for game in games:
-		print game
 		if (int(game['gameRoomId']) == int(roomId)):
-			print game
-			return json.dumps(game)
+			return game
 
 def getServerName(url):
 	servers = json.loads(common.getAllServers())
@@ -334,6 +412,27 @@ def getServerName(url):
 		if (server['serverUrl'] == url):
 			return json.dumps(server)
 
+def getGamePosition(gameId):
+	content = getAllGamePosition()
+
+	if (content != ''):
+		data = json.loads(content)
+		
+		for datum in data:
+			if (int(datum['gameRoomId']) == int(gameId)):
+				return datum
+ 
+		return None
+	else: 
+		return None
+
+def getAllGamePosition():
+	fsource = 'game.json'
+	f = open(fsource, 'r')
+	content = f.read()
+	f.close()
+
+	return content
 
 def getAllUsers():
 	fsource = 'users.json'

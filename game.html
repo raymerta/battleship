@@ -53,7 +53,7 @@
 						<td><span id="pPlayer"></span> players ( <span id="pInGame"></span> in game )</td>
 					</tr>
 				</table>
-				<a href="#" class="newgamecancel" onclick="watch()">WATCH</a><a href="#" class="newgamesubmit" id="pJoin">JOIN</a>
+				<a href="#" class="newgamecancel" onclick="watch()">WATCH</a><a href="#" class="newgamesubmit" id="pJoin" onclick="join()">JOIN</a>
 				<div class="clearfix"></div>
 			</div>
 		</div>
@@ -72,6 +72,7 @@
 			messages[0] = "In Editing Mode";
 			messages[1] = "Game Ready, Waiting for player";
 			messages[2] = "Game is Running, Current Turn : ";
+			messages[4] = "In Watching Mode";
 
 
 			function getServerDetail() {
@@ -126,7 +127,7 @@
 							var user = getUserInfo(game.users, uri[3]);
 							if (user == '') {
 								document.getElementById("placeShips").style.display = "none";
-								document.getElementById("notifContent").innerHTML = "Game Ready";
+								document.getElementById("notifContent").innerHTML = messages[4];
 								document.getElementById("saveGame").style.display = "none";
 								isEditing = false;
 								isWatching = true;
@@ -141,9 +142,45 @@
 				http.send();
 			}
 
+			function join() {
+				var http = new XMLHttpRequest();
+				var url = "http://localhost:10001/_joinGame/";
+				var gameId = uri[4];
+				var username = uri[3];
+
+				var params = gameId + ";" + username ;
+				http.open("POST", url, true);
+
+				//capture success response
+				http.onreadystatechange = function() {
+					if (http.readyState == 4 && http.status == 200) {
+						console.log(http.responseText);
+
+						if (http.responseText == "True") {
+							editingMode();
+							alert("you have joined the game");
+						} else {
+							watch();
+							alert("can't add more player, you are in watching mode");
+						}
+					}
+				}
+
+				http.send(params);
+			}
+
+			function editingMode() {
+				document.getElementById("placeShips").style.display = "block";
+				document.getElementById("notifContent").innerHTML = messages[0];
+				document.getElementById("saveGame").style.display = "block";
+				isEditing = true;
+				isWatching = false;
+			}
+
 			function watch() {
 				isWatching = true;
 				document.getElementById("blackDrop").style.display = "none";
+				document.getElementById("notifContent").style.display = messages[4];
 			}
 
 			function getUserInfo(users, username) {
@@ -333,17 +370,41 @@
 				}
 			}
 
-			function clickingPos() {
-				
+			function savingPosition() {
+				var username = uri[3];
+				var gameId = uri[4];
+				var data = { "gameId" : gameId, "username" : username, "ships" : [
+						{ "shipName" : "battleship" , "info" : ship['battleship']},
+						{ "shipName" : "destroyer" , "info" : ship['destroyer']},
+						{ "shipName" : "cruiser" , "info" : ship['cruiser']},
+						{ "shipName" : "submarine" , "info" : ship['submarine']},
+					] 
+				};
+
+				var http = new XMLHttpRequest();
+				var url = "http://localhost:10001/_saveGamePosition/";
+				var params = JSON.stringify(data);
+				http.open("POST", url, true);
+
+				console.log(params);
+
+				//capture success response
+				http.onreadystatechange = function() {
+					if (http.readyState == 4 && http.status == 200) {
+						alert("position saved!");
+					}
+				}
+
+				http.send(params);
 			}
 
 			function saveGame() {
 				document.getElementById("placeShips").style.display = "none";
-				document.getElementById("notifContent").innerHTML = "Game Ready";
+				document.getElementById("notifContent").innerHTML = messages[1];
 				document.getElementById("saveGame").style.display = "none";
 				isEditing = false;
-				isPlaying = true;
 				console.log(ship);
+				savingPosition();
 			}
 
 			// rabbitmq
