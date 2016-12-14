@@ -130,6 +130,8 @@ def routingHandler(pduResult, conn, addr):
 			component = (200, content, "text/plain")
 			sendResponse(conn, component)
 
+
+
 	elif (addr[1] == '_createGame'):
 		username = pduResult.content.strip().split(";")[0]
 		serverId = pduResult.content.strip().split(";")[1]
@@ -160,7 +162,7 @@ def routingHandler(pduResult, conn, addr):
 		content = getGameInfo(addr[2])
 
 		component = (200, content, "text/plain")
-		sendResponse(conn, component)	
+		sendResponse(conn, component)
 
 	elif (addr[1] == '_servers'):
 		content = common.getAllServers()
@@ -222,6 +224,7 @@ def findDuplicateName(username, serverId):
 	content = getAllUsers()
 
 	if (content != ""):
+		thereIsADuplicate = False
 		userInfo = json.loads(content)
 		users = []
 		for info in userInfo:
@@ -236,21 +239,21 @@ def findDuplicateName(username, serverId):
 		else:
 			for user in users:
 				if (user["username"] == username):
-					print >> sys.stderr, "USERNAME ALREADY USED"
-			newUser = {"username": username, "userCreated" : int(time.time()) }
-			for info in userInfo:
-				if (int(info["serverId"]) == int(serverId)):
-					users.append(newUser)
+					thereIsADuplicate = True
+			if (thereIsADuplicate == False):
+				newUser = {"username": username, "userCreated" : int(time.time()) }
+				for info in userInfo:
+					if (int(info["serverId"]) == int(serverId)):
+						users.append(newUser)
 
 
 		content = json.dumps(userInfo)
-
 		fsource = 'users.json'
 		f = open(fsource, 'w')
 		f.write(content)
 		f.close()
 
-		return False
+		return thereIsADuplicate
 
 	else:
 		#empty json file, proceed to create initial content
@@ -266,7 +269,7 @@ def findDuplicateName(username, serverId):
 
 gameRoomName = ['Atlantic Ocean', 'Arctic Ocean', 'Indian Ocean', 'Pacific Ocean', 'Norwegian Sea', 'North Sea', 'Aegean Sea', 'Southern Ocean', 'Arabian Sea', 'East China Sea']
 
-def createGameRoom(tiles, player, serverId, username): 
+def createGameRoom(tiles, player, serverId, username):
 	content = common.getAllSessions()
 
 	# generate random game room name
@@ -314,8 +317,8 @@ def getGameInfo(roomId):
 def getServerName(url):
 	servers = json.loads(common.getAllServers())
 
-	for server in servers: 
-		if (server['serverUrl'] == url): 
+	for server in servers:
+		if (server['serverUrl'] == url):
 			return json.dumps(server)
 
 
