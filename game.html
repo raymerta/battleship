@@ -163,33 +163,36 @@
 				size: 4,
 				color: "#f8b823",
 				placed: 0,
-				qty: 1
+				qty: 1,
+				coor: []
 			}
 
 			ship['cruiser'] = {
 				size: 3,
 				color: "#ff842f",
 				placed: 0,
-				qty: 2
+				qty: 2,
+				coor: []
 			}
 
 			ship['destroyer'] = {
 				size: 2,
 				color: "#ff6c54",
 				placed: 0,
-				qty: 3
+				qty: 3,
+				coor: []
 			}
 
 			ship['submarine'] = {
 				size: 1,
 				color: "#26d2b5",
 				placed: 0,
-				qty: 4
+				qty: 4,
+				coor: []
 			}
 
 			var firstPos = "";
 			var secondPos = [];
-			var shipCoor = [];
 
 			function generateMap() {
 				document.getElementById("map").style.width = (mapSize * 54) + "px";
@@ -271,7 +274,7 @@
 
 							// put color in selection
 							document.getElementById(pos).style.background = ship[shipSelected].color;
-							shipCoor.push(pos);
+							ship[shipSelected].coor.push(pos);
 
 							// draw the rest of ship body
 							if (ship[shipSelected].size - 2 > 0) {
@@ -281,7 +284,7 @@
 
 								for (var i = 0; i < ship[shipSelected].size - 2; i++) {
 									document.getElementById(curr).style.background = ship[shipSelected].color;
-									shipCoor.push(curr);
+									ship[shipSelected].coor.push(curr);
 									curr = curr + diff;
 								}
 							}
@@ -307,7 +310,7 @@
 						}
 					} else {
 						document.getElementById(pos).style.background = ship[shipSelected].color;
-						shipCoor.push(pos);
+						ship[shipSelected].coor.push(pos);
 						
 						if (ship[shipSelected].size > 1) {
 							firstPos = pos;
@@ -339,8 +342,8 @@
 				document.getElementById("notifContent").innerHTML = "Game Ready";
 				document.getElementById("saveGame").style.display = "none";
 				isEditing = false;
-				isWatching = true;
-				console.log(shipCoor);
+				isPlaying = true;
+				console.log(ship);
 			}
 
 			// rabbitmq
@@ -378,7 +381,8 @@
 			// This will be called upon arrival of a message
 			function on_message(m) {
 			  	console.log('message received');
-			  	console.log(m.body.trim());
+			  	pos = m.body.trim();
+			  	document.getElementById(pos).style.background = "linear-gradient(rgba(41, 41, 41, 0.5), rgba(41, 41, 41, 0.5)), url('http://parallemon.com/battleship/seablock.png')";
 			}
 
 			// Create a client
@@ -394,12 +398,13 @@
 				}
 
 				if (isPlaying == true) {
-
+					console.log("clicking");
+					client.send(mq_queue, {"content-type":"text/plain"}, pos);
+					document.getElementById(pos).style.background = "linear-gradient(rgba(41, 41, 41, 0.5), rgba(41, 41, 41, 0.5)), url('http://parallemon.com/battleship/seablock.png')";
 				}
 
 				if (isWatching == true) {
-					console.log("clicking");
-					client.send(mq_queue, {"content-type":"text/plain"}, pos);
+					
 				}
 			}
 
