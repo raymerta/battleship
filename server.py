@@ -144,6 +144,12 @@ def routingHandler(pduResult, conn, addr):
 			component = (200, content, "text/plain")
 			sendResponse(conn, component)
 
+	elif (addr[1] == '_getGameRooms'):
+		content = getSessionServer(addr[2])
+
+		component = (200, content, "text/plain")
+		sendResponse(conn, component)
+
 	elif (addr[1] == '_getservername'):
 		content = getServerName(addr[2])
 
@@ -231,7 +237,7 @@ def findDuplicateName(username, serverId):
 
 		return False
 
-gameRoomName = ['Atlantic Ocean', 'Arctic Ocean', 'Indian Ocean', 'Pacific Ocean']
+gameRoomName = ['Atlantic Ocean', 'Arctic Ocean', 'Indian Ocean', 'Pacific Ocean', 'Norwegian Sea', 'North Sea', 'Aegean Sea', 'Southern Ocean', 'Arabian Sea', 'East China Sea']
 
 def createGameRoom(tiles, player, serverId, username): 
 	content = getAllSessions()
@@ -273,15 +279,13 @@ def getServerName(url):
 			return json.dumps(server)
 
 def getSessionServer(serverId):
-	fsource = 'sessions.json'
-	f = open(fsource, 'r')
-	content = f.read()
-	f.close()
+	games = json.loads(getAllSessions())
+	display = []
 
-	if (content != ""):
-		print >> sys.stderr, content
-	else:
-		return None
+	for game in games:
+		if (int(game['serverId']) == int(serverId)):
+			display.append(game)
+	return json.dumps(display)
 
 def getAllSessions():
 	fsource = 'sessions.json'

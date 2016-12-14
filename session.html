@@ -24,9 +24,7 @@
 
 				<a href="#" onclick="openDialog()"><div class="gamebutton">New Game</div></a>
 
-				<!-- <a href="http://localhost:10001/game"><div class="gamebutton">Baltic Sea 1</div></a>
-				<a href="http://localhost:10001/game"><div class="gamebutton">Atlantic Sea 1</div></a>
-				<a href="http://localhost:10001/game"><div class="gamebutton">Pacific Sea 1</div></a> -->
+				<div id="gameList"></div>
 
 			</div>
 		</div>
@@ -58,8 +56,7 @@
 			var server = '';
 			var uri = window.location.pathname.split('/');
 
-			function getServerDetail() {
-				
+			function getServerDetail() {	
 				var http = new XMLHttpRequest();
 				var url = "http://localhost:10001/_getservername/" + uri[2];
 				http.open("GET", url);
@@ -68,9 +65,8 @@
 				http.onreadystatechange = function() {
 					if (http.readyState == 4 && http.status == 200) {
 						server = JSON.parse(http.responseText);
-
-						console.log(server.serverName);
 						document.getElementById("serverName").innerHTML = server.serverName;
+						getGameRooms();
 					}
 				}
 
@@ -78,6 +74,30 @@
 			}
 
 			getServerDetail();
+
+			function getGameRooms() {
+				var http = new XMLHttpRequest();
+				var url = "http://localhost:10001/_getGameRooms/" + server.serverId;
+				http.open("GET", url);
+
+				//capture success response
+				http.onreadystatechange = function() {
+					if (http.readyState == 4 && http.status == 200) {
+						game = JSON.parse(http.responseText)
+						console.log(game);
+
+						var gameList = '';
+						for (var i = 0; i < game.length; i++) {
+							var gName = game[i].roomName;
+							gameList = gameList + '<a href="http://localhost:10001/game/' + server.serverName + '/' + uri[3] + '/' + game[i].gameRoomId + '"><div class="gamebutton">' + game[i].roomName + '</div>';
+						}
+
+						document.getElementById("gameList").innerHTML = gameList;
+					}
+				}
+
+				http.send();
+			}			
 
 			// open new game creation dialog
 			function openDialog() {

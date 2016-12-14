@@ -23,7 +23,6 @@ http://stackoverflow.com/questions/3028899/what-is-the-difference-between-remote
 - run 'python server.py'
 - open Chrome browser, type 'http://localhost:10001/'
 
-
 Notes: 
 
 - ensure internet is connected to load assets (images, fonts, style, etc)
