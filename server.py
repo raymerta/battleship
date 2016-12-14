@@ -181,7 +181,7 @@ def routingHandler(pduResult, conn, addr):
 		content = joinGame(gameId, username)
 
 		component = (200, content, "text/plain")
-		sendResponse(conn, component)
+		sendResponse(conn, component)		
 
 
 	elif (addr[1] == '_saveGamePosition'):
@@ -459,7 +459,6 @@ def getGamePosition(gameId):
 		for datum in data:
 			if (int(datum['gameRoomId']) == int(gameId)):
 				return datum
-
 		return None
 	else:
 		return None
