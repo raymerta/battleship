@@ -466,7 +466,6 @@ def saveGamePosition(obj):
 			f.close()
 
 	else :
-
 		print >> sys.stderr, "game.json is empty, so creating it"
 
 		data = [{"gameRoomId" : obj['gameId'], "users" : [{ "username" : obj['username'], "position" : obj['ships'] }] }]
@@ -476,7 +475,6 @@ def saveGamePosition(obj):
 		f = open(fsource, 'w')
 		f.write(dataObject)
 		f.close()
-
 
 	return True
 

@@ -74,6 +74,7 @@
 			var isPlaying = false;
 
 			var currUsers = [];
+			var currTurn = 0;
 
 			var server = '';
 			var uri = window.location.pathname.split('/');
@@ -132,8 +133,13 @@
 				if (msg.name == 'add_user') {
 			  		var username = msg.username;
 			  		var status = msg.isPlaying;
+<<<<<<< Updated upstream
 			  		currUsers.push({ "username" : username, "isPlaying" : status});
 
+=======
+			  		currUsers.push({ "username" : username, "isPlaying" : false});
+			  		
+>>>>>>> Stashed changes
 			  		document.getElementById("displayUser").innerHTML = document.getElementById("displayUser").innerHTML + '<a href="#" class="user" id="user-' + username + '" style="background: ' + colors[currUsers.length - 1] + '; border: 3px solid ' + colors[currUsers.length - 1] + ';">' + username + '</a>';
 			  	}
 
@@ -142,10 +148,15 @@
 			  		var status = msg.isPlaying;
 
 			  		var index = currUsers.indexOf(username);
+<<<<<<< Updated upstream
 			  		currUsers[index] = { "username" : username, "isPlaying" : status};
 
+=======
+			  		currUsers[index] = { "username" : username, "isPlaying" : true};
+			  		
+>>>>>>> Stashed changes
 			  		if (gameStarted()) {
-			  			document.getElementById("notifContent").innerHTML = messages[2];
+			  			document.getElementById("notifContent").innerHTML = messages[2] + currUsers[currTurn].username;
 			  		}
 			  	}
 
@@ -201,8 +212,13 @@
 
 							var users = '';
 							for (var i = 0; i < game.users.length; i ++) {
+<<<<<<< Updated upstream
 								currUsers.push(game.users[i].username);
 								users = users + '<a href="#" class="user" id="user-' + username + '" style="background: ' + colors[i] + '; border: 3px solid ' + colors[i] + ';">' + game.users[i].username + '</a>';
+=======
+								currUsers.push({ "username" : game.users[i].username, "isPlaying" : false});
+								users = users + '<a href="#" class="user" id="user-' + username + '" style="background: ' + colors[i] + '; border: 3px solid ' + colors[i] + ';">' + game.users[i].username + '</a>'; 
+>>>>>>> Stashed changes
 							}
 
 							document.getElementById("displayUser").innerHTML = users;
@@ -377,7 +393,6 @@
 			function droppingShipRange(pos) {
 
 				//TODO do not add white range if it's near other existing ship
-
 				var modulo = pos % mapSize;
 				var div = Math.floor(pos / mapSize);
 
@@ -517,21 +532,43 @@
 			}
 
 			function saveGame() {
-				document.getElementById("placeShips").style.display = "none";
-				document.getElementById("notifContent").innerHTML = messages[1];
-				document.getElementById("saveGame").style.display = "none";
-				document.getElementById("userList").style.display = "block";
-				isEditing = false;
-				console.log(ship);
-				savingPosition();
 
-				// rabbitmq update
-				var msg = {"name" : "save_game" , "username" : uri[3], "isPlaying" : true};
-				client.send(mq_queue, {"content-type":"text/plain"}, JSON.stringify(msg));
+				var isAllPlaced = checkPlacement();
 
-				//requesting from server
-				updateStatusUser('edit');
-				getGameStatus();
+				if (isAllPlaced == true) {
+					document.getElementById("placeShips").style.display = "none";
+					document.getElementById("notifContent").innerHTML = messages[1];
+					document.getElementById("saveGame").style.display = "none";
+					document.getElementById("userList").style.display = "block";
+					isEditing = false;
+					isWaiting = true;
+					console.log(ship);
+
+					//saving position
+					savingPosition();
+
+					// rabbitmq update
+					var msg = {"name" : "save_game" , "username" : uri[3], "isPlaying" : true};
+					client.send(mq_queue, {"content-type":"text/plain"}, JSON.stringify(msg));
+
+					//requesting from server
+					updateStatusUser('edit');
+					getGameStatus();
+				} else {
+					alert("must place all battleship");
+				}
+			}
+
+			function checkPlacement() {
+
+				var placed = ship['battleship'].placed + ship['cruiser'].placed + ship['destroyer'].placed + ship['submarine'].placed;
+				var total = ship['battleship'].qty + ship['cruiser'].qty + ship['destroyer'].qty + ship['submarine'].qty;
+
+				if (placed - total == 0) {
+					return true;
+				} else {
+					return false;
+				}
 			}
 
 			function updateStatusUser(status) {
@@ -579,8 +616,11 @@
 				 // alert(url)
 				http.open("GET", url, true);
 
+<<<<<<< Updated upstream
 				// console.log(params);
 
+=======
+>>>>>>> Stashed changes
 				//capture success response
 				http.onreadystatechange = function() {
 					if (http.readyState == 4 && http.status == 200) {
