@@ -80,20 +80,62 @@ expected result: can create username, redirected to game session page
 - insert unique username
 - select 'New Game'
 - Specefiy Number of players/ Game Tile Size and click Sumbit
+- Select [Buttleship/Cruiser/Destroyer/Submarine] + the position
+- Click Start Game
 
-Expected result: game started
+Expected result: Game started and the position saved.
 
-## select existing game
+## select existing game [Done]
 
+- open Chrome browser, type 'http://localhost:10001/'
+- pick one of the servers
+- insert unique username
+- select a server 
+- Click Join
+- Select [Buttleship/Cruiser/Destroyer/Submarine] + the position
+- wait for the master player to start the battle
 
-## select existing game, game is running yet, and choose cancel
+Expected result: New player joined the game if there is free space, and can select the buttleship and the position. 
+
+## select existing game, game is running , and choose cancel
+
+- open Chrome browser, type 'http://localhost:10001/'
+- pick one of the servers
+- insert unique username
+- select a server 
+- Click Join and start playing
+- Click Cancel
+
+Expected result:all ships have to be removed from the game field,
+In case only one player is involved in the game and the others already left, the
+game session should end
 
 
 ## select existing game, game is not running yet, and join
 
 
+
 ## select existing game, game is not running yet, and join but somebody already join
 
+## The creator player notified for new player joined with his game session.
+
+- open Chrome browser, type 'http://localhost:10001/'
+- pick one of the servers
+- insert unique username
+- select 'New Game'
+- Specefiy Number of players/ Game Tile Size and click Sumbit
+- Player 2 Join the game session
+
+Expected result: Server creater received a notification informing new player joined the game session
+
+## start shooting each other
+
+- Game session started
+- Player 1 shoot - 1st attendence
+- Player 2 shoot - 2nd attendence
+
+Expected results: - Player 2 can't shoot before Player 1
+                  - The serve notify the next one of his turn to shoot
 
 ## Special Case
 
