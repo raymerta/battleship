@@ -62,12 +62,6 @@ table {
    clear: both;
 }
 
-.errorbox {
-	height: 40px;
-	background-color: red;
-	color: white;
-}
-
 /* Game styling */
 
 .skybackground {
