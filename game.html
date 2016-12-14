@@ -216,6 +216,7 @@
 
 							//isJoined or not, if yes toggle off editing mode
 							var user = getUserInfo(game.users, uri[3]);
+
 							if (user == '') {
 								document.getElementById("placeShips").style.display = "none";
 								document.getElementById("notifContent").innerHTML = messages[4];
@@ -231,6 +232,20 @@
 					}
 				}
 
+				http.send();
+			}
+
+			function getUsernamePosition() {
+				var http = new XMLHttpRequest();
+				var url = "http://localhost:10001/_getUsernamePosition/" + uri[4] + '/' + uri[3];
+				http.open("GET", url);
+
+				//capture success response
+				http.onreadystatechange = function() {
+					if (http.readyState == 4 && http.status == 200) {
+						console.log(http.responseText);
+					}
+				}
 				http.send();
 			}
 

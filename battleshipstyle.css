@@ -236,6 +236,15 @@ a:hover .gamebutton{
 	color: #132937;
 }
 
+.errorbox {
+	padding: 10px; 
+	width: 503px; 
+	background: #dd123f;
+	color: white; 
+	border-radius: 25px; 
+	margin: 0 auto 0 auto
+}
+
 .seablock {
 	width: 50px;
 	height: 50px;

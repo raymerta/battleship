@@ -22,10 +22,12 @@
 				<input id="username" class="gametext" type="text"/>
 
 				<br/>
+
+
+
 				<a href="#"><div class="gamebutton" onclick="submitName()">Submit</div></a>
 			</div>
-			<div id="usernameTaken" class="errorbox" style="visibility: hidden; height: 40px; width: 500px;
-																												background-color: red; color: white; border-radius: 25px;">
+			<div id="usernameTaken" class="errorbox" style="display: none;">
 				<span style="height: 40px;">Given username is already taken. Please choose another.</span>
 			</div>
 		</div>
@@ -70,7 +72,7 @@
 						window.location = http.responseText.trim();
 					}
 					else if (http.status == 422) {
-						document.getElementById("usernameTaken").style.visibility = "visible";
+						document.getElementById("usernameTaken").style.display = "block";
 					}
 				}
 

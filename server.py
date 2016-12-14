@@ -126,6 +126,7 @@ def routingHandler(pduResult, conn, addr):
 		sendResponse(conn, component)
 
 	##########
+
 	elif (addr[1] == '_insertname'):
 		username = pduResult.content.strip().split(";")[0]
 		serverId = pduResult.content.strip().split(";")[1]
@@ -136,7 +137,6 @@ def routingHandler(pduResult, conn, addr):
 			content = 'http://localhost:10001/session/%s/%s' % (serverUrl, username)
 			component = (200, content, "text/plain")
 			sendResponse(conn, component)
-
 		else:
 			content = "Given username is already in use."
 			component = (422, content, "text/plain")
@@ -155,6 +155,14 @@ def routingHandler(pduResult, conn, addr):
 	elif (addr[1] == '_getGameStatus'):
 		roomId = addr[2]
 		content = getGameStatus(roomId)
+
+		component = (200, content, "text/plain")
+		sendResponse(conn, component)
+
+	elif (addr[1] == '_getUsernamePosition'): 
+		roomId = addr[2]
+		username = addr[3]
+		content = getGameUsernamePosition(roomId, username)
 
 		component = (200, content, "text/plain")
 		sendResponse(conn, component)
@@ -279,11 +287,11 @@ def findDuplicateName(username, serverId):
 			newUserAndServer = {"serverId" : serverId, "users": [{"username": username, "userCreated" : int(time.time()) }] }
 			userInfo.append(newUserAndServer)
 
-
 		else:
 			for user in users:
 				if (user["username"] == username):
 					thereIsADuplicate = True
+
 			if (thereIsADuplicate == False):
 				newUser = {"username": username, "userCreated" : int(time.time()) }
 				for info in userInfo:
@@ -291,13 +299,13 @@ def findDuplicateName(username, serverId):
 						users.append(newUser)
 
 
-		content = json.dumps(userInfo)
-		fsource = 'users.json'
-		f = open(fsource, 'w')
-		f.write(content)
-		f.close()
+				content = json.dumps(userInfo)
+				fsource = 'users.json'
+				f = open(fsource, 'w')
+				f.write(content)
+				f.close()
 
-		return thereIsADuplicate
+				return thereIsADuplicate
 
 	else:
 		#empty json file, proceed to create initial content
@@ -324,7 +332,7 @@ def createGameRoom(tiles, player, serverId, username):
 		sessions = json.loads(content)
 		roomId = len(sessions) + 1
 
-		data = {"serverId" : serverId, "numPlayers" : player, "size" : tiles, "creator": username , "roomName": roomName, "roomCreated": int(time.time()), "isPlaying": False, "isEnded" : False , "gameRoomId" : roomId, "users": [{"username": username, "isTurn" : False, "isDefeated" : False, "isWinning" : False}] }
+		data = {"serverId" : serverId, "numPlayers" : player, "size" : tiles, "creator": username , "roomName": roomName, "roomCreated": int(time.time()), "isPlaying": False, "isEnded" : False , "gameRoomId" : roomId, "users": [{"username": username, "isTurn" : False, "isDefeated" : False, "isWinning" : False, "isPlaying" : False}] }
 		sessions.append(data)
 
 		dataObject = json.dumps(sessions)
@@ -338,7 +346,7 @@ def createGameRoom(tiles, player, serverId, username):
 
 	else:
 		#empty json file, proceed to create initial content
-		data = [{"serverId" : serverId, "numPlayers" : player, "size" : tiles, "creator": username , "roomName": roomName, "roomCreated": int(time.time()), "isPlaying": False, "isEnded" : False , "gameRoomId" : 1, "users": [{"username": username, "isTurn" : False, "isDefeated" : False, "isWinning" : False}] }]
+		data = [{"serverId" : serverId, "numPlayers" : player, "size" : tiles, "creator": username , "roomName": roomName, "roomCreated": int(time.time()), "isPlaying": False, "isEnded" : False , "gameRoomId" : 1, "users": [{"username": username, "isTurn" : False, "isDefeated" : False, "isWinning" : False, "isPlaying" : False}] }]
 		dataObject = json.dumps(data)
 
 		fsource = 'sessions.json'
@@ -449,6 +457,13 @@ def getServerName(url):
 	for server in servers:
 		if (server['serverUrl'] == url):
 			return json.dumps(server)
+
+def getGameUsernamePosition(gameId, username)
+	content = getAllGamePosition()
+
+	#TODO return object of username position in requested gameRoomId , the object will be turned to json string later
+
+	return content 
 
 def getGamePosition(gameId):
 	content = getAllGamePosition()

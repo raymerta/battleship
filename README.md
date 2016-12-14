@@ -87,8 +87,6 @@ expected result: can create username, redirected to game session page
 ## select existing game, game is not running yet, and join but somebody already join
 
 
-
-
 ## Special Case
 
 - ensure testing crossbrowser connectivity
