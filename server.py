@@ -43,7 +43,6 @@ Content-type: %s
 
 %s
 """
-# TODO Handling local CSS and Javascript file
 
 # setting mime types
 mimeTypes = {
@@ -71,7 +70,7 @@ def socketServer(serverAddress):
     sock.listen(5)
     return sock
 
-# handling routing TODO
+# handling routing
 def routingHandler(pduResult, conn, addr):
 
 	# remove beginning /
@@ -143,7 +142,15 @@ def routingHandler(pduResult, conn, addr):
 			component = (422, content, "text/plain")
 			sendResponse(conn, component)
 
+	elif (addr[1] == '_updateStatusUser'):
+		username = pduResult.content.strip().split(";")[1]
+		status = pduResult.content.strip().split(";")[0]
+		roomId = pduResult.content.strip().split(";")[2]
 
+		content = updateStatusUser(status, username, roomId)
+
+		component = (200, content, "text/plain")
+		sendResponse(conn, component)
 
 	elif (addr[1] == '_createGame'):
 		username = pduResult.content.strip().split(";")[0]
@@ -160,8 +167,6 @@ def routingHandler(pduResult, conn, addr):
 			sendResponse(conn, component)
 
 	elif (addr[1] == '_joinGame'):
-		print pduResult.content
-
 		username = pduResult.content.strip().split(";")[1]
 		gameId = pduResult.content.strip().split(";")[0]
 
@@ -251,7 +256,6 @@ def handler(conn, addr):
 # game related function here
 # ===================================================================
 
-# todo fix this part
 def findDuplicateName(username, serverId):
 	content = getAllUsers()
 
@@ -312,7 +316,7 @@ def createGameRoom(tiles, player, serverId, username):
 		sessions = json.loads(content)
 		roomId = len(sessions) + 1
 
-		data = {"serverId" : serverId, "numPlayers" : player, "size" : tiles, "creator": username , "roomName": roomName, "roomCreated": int(time.time()), "isPlaying": False, "isEnded" : False , "gameRoomId" : roomId, "users": [{"username": username, "isTurn" : False, "isDefeated" : False, "isWinning" : False, "isEditing" : True }] }
+		data = {"serverId" : serverId, "numPlayers" : player, "size" : tiles, "creator": username , "roomName": roomName, "roomCreated": int(time.time()), "isPlaying": False, "isEnded" : False , "gameRoomId" : roomId, "users": [{"username": username, "isTurn" : False, "isDefeated" : False, "isWinning" : False}] }
 		sessions.append(data)
 
 		dataObject = json.dumps(sessions)
@@ -326,7 +330,7 @@ def createGameRoom(tiles, player, serverId, username):
 
 	else:
 		#empty json file, proceed to create initial content
-		data = [{"serverId" : serverId, "numPlayers" : player, "size" : tiles, "creator": username , "roomName": roomName, "roomCreated": int(time.time()), "isPlaying": False, "isEnded" : False , "gameRoomId" : 1, "users": [{"username": username, "isTurn" : False, "isDefeated" : False, "isWinning" : False, "isEditing" : True }] }]
+		data = [{"serverId" : serverId, "numPlayers" : player, "size" : tiles, "creator": username , "roomName": roomName, "roomCreated": int(time.time()), "isPlaying": False, "isEnded" : False , "gameRoomId" : 1, "users": [{"username": username, "isTurn" : False, "isDefeated" : False, "isWinning" : False}] }]
 		dataObject = json.dumps(data)
 
 		fsource = 'sessions.json'
@@ -342,8 +346,19 @@ def joinGame(gameId, username):
 	sessions = common.getAllSessions()
 
 	#TODO, check if number of players < number of users in the session, if yes, return true and update the session.json page (see save game position for example), if not, return false 
+	return True
 
-	return False
+def updateStatusUser(status, username, roomId):
+
+	#TODO update this username in this roomID session.js to isPlaying : true. be careful with all the json formatting. return True if you are able to format it, return False for every problem
+
+	return True
+
+def getGameStatus(roomId):
+
+	#TODO return True if all users in this roomID is already in isPlaying : True mode, return False otherwise
+
+	return True
 
 def saveGamePosition(obj):
 	game = getGamePosition(obj['gameId'])

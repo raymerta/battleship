@@ -170,14 +170,28 @@ a.newgamecancel {
     position: fixed;
 }
 
+.gamemode {
+	padding-bottom: 50px;
+}
+
 .ship {
-	float: left;
 	background: white;
 	padding: 15px 50px;
 	-webkit-border-radius: 50px;
 	border-radius: 50px;
 	margin: 0px 5px 10px 5px;
 	cursor: pointer;
+	color: white;
+}
+
+.user {
+	background: white;
+	padding: 15px 50px;
+	-webkit-border-radius: 50px;
+	border-radius: 50px;
+	margin: 0px 5px 10px 5px;
+	cursor: pointer;
+	color: white;
 }
 
 .ship.battleship {

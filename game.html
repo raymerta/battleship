@@ -23,12 +23,19 @@
 
 				<h1 class="servername" id="gameName"></h1>
 
-				<div id="placeShips">
-				<div class="ship battleship" id="battleship" onclick="selectShip('battleship')">Battleship (1)</div> 
-				<div class="ship cruiser" id="cruiser" onclick="selectShip('cruiser')">Cruiser (2)</div>
-				<div class="ship destroyer" id="destroyer" onclick="selectShip('destroyer')">Destroyer (3)</div>
-				<div class="ship submarine" id="submarine" onclick="selectShip('submarine')">Submarine (4)</div>
+				<div id="placeShips" class="gamemode">
+					<p style="margin-bottom: 40px;">List of Ships:</p>
+					<a href="#" class="ship battleship" id="battleship" onclick="selectShip('battleship')">Battleship (1)</a> 
+					<a href="#" class="ship cruiser" id="cruiser" onclick="selectShip('cruiser')">Cruiser (2)</a>
+					<a href="#" class="ship destroyer" id="destroyer" onclick="selectShip('destroyer')">Destroyer (3)</a>
+					<a href="#" class="ship submarine" id="submarine" onclick="selectShip('submarine')">Submarine (4)</a>
 				</div>
+
+				<div id="userList" style="display: none;" class="gamemode">
+					<p style="margin-bottom: 40px;">List of Users:</p>
+					<div id="displayUser"></div>
+				</div>				
+
 				<div class="clearfix"></div>
 			</div>
 		</div>
@@ -65,6 +72,8 @@
 			var isWatching = false;
 			var isPlaying = false;
 
+			var currUsers = [];
+
 			var server = '';
 			var uri = window.location.pathname.split('/');
 
@@ -73,6 +82,67 @@
 			messages[1] = "Game Ready, Waiting for player";
 			messages[2] = "Game is Running, Current Turn : ";
 			messages[4] = "In Watching Mode";
+
+			var colors = ["#f8b823", "#ff842f", "#ff6c54", "#26d2b5", "#2f87da"];
+
+			//===================================
+			// rabbitmq
+			//===================================
+
+			// Use SockJS
+			Stomp.WebSocketClass = SockJS;
+
+			// Connection parameters
+			var mq_username = "guest";
+			var mq_password = "guest";
+			var mq_vhost = "/";
+			var mq_url = 'http://localhost:15674/stomp';
+
+			    //topic name
+			var mq_queue = "/topic/play-" + uri[4];
+			var mq_ctype = {"content-type":"text/plain"};
+
+			// This is where we print incomoing messages
+			var output;
+
+			// This will be called upon successful connection
+			function on_connect() {
+				console.log('connected');
+				console.log(client);
+			  	client.subscribe(mq_queue, on_message);
+			}
+
+			// This will be called upon a connection error
+			function on_connect_error() {
+				console.log(client);
+				console.log("connection error");
+			}
+
+			// This will be called upon arrival of a message
+			function on_message(m) {
+			  	console.log('message received');
+			  	var msg = JSON.parse(m.body.trim());
+
+			  	if (msg.name == 'clicking') {
+			  		var pos = msg.clickedPos;
+			  		document.getElementById(pos).style.background = "linear-gradient(rgba(41, 41, 41, 0.5), rgba(41, 41, 41, 0.5)), url('http://parallemon.com/battleship/seablock.png')";	
+			  	}
+
+				if (msg.name == 'add_user') {
+			  		var username = msg.username;
+			  		currUsers.push(username);
+			  		
+			  		document.getElementById("displayUser").innerHTML = document.getElementById("displayUser").innerHTML + '<a href="#" class="user" id="user-' + username + '" style="background: ' + colors[currUsers.length - 1] + '; border: 3px solid ' + colors[currUsers.length - 1] + ';">' + username + '</a>';
+			  	}			  	
+			  	
+			}
+
+			// Create a client
+			var client = Stomp.client(mq_url);
+
+			client.connect(mq_username, mq_password, on_connect, on_connect_error, mq_vhost);
+
+			//===================================
 
 
 			function getServerDetail() {
@@ -107,14 +177,21 @@
 							console.log(game);
 
 							mapSize = game.size;
-							var d = new Date(0); 
-							d.setUTCSeconds(game.roomCreated);
-
+						
 							document.getElementById("gameName").innerHTML = game.roomName;
 							document.getElementById("popupGameName").innerHTML = game.roomName;
 							document.getElementById("pCreator").innerHTML = game.creator;
 							document.getElementById("pPlayer").innerHTML = game.numPlayers;
 							document.getElementById("pInGame").innerHTML = game.users.length;
+							username = uri[3];
+
+							var users = '';
+							for (var i = 0; i < game.users.length; i ++) {
+								currUsers.push(game.users[i].username);
+								users = users + '<a href="#" class="user" id="user-' + username + '" style="background: ' + colors[i] + '; border: 3px solid ' + colors[i] + ';">' + game.users[i].username + '</a>'; 
+							}
+
+							document.getElementById("displayUser").innerHTML = users;
 							
 							//generate Map
 							generateMap();
@@ -129,6 +206,7 @@
 								document.getElementById("placeShips").style.display = "none";
 								document.getElementById("notifContent").innerHTML = messages[4];
 								document.getElementById("saveGame").style.display = "none";
+								document.getElementById("userList").style.display = "block";
 								isEditing = false;
 								isWatching = true;
 
@@ -156,9 +234,15 @@
 					if (http.readyState == 4 && http.status == 200) {
 						console.log(http.responseText);
 
-						if (http.responseText == "True") {
+						if (http.responseText.trim() == "True") {
 							editingMode();
 							alert("you have joined the game");
+
+							document.getElementById("blackDrop").style.display = "none";
+
+							var msg = {"name" : "add_user" , "username" : uri[3]};
+							client.send(mq_queue, {"content-type":"text/plain"}, JSON.stringify(msg));
+
 						} else {
 							watch();
 							alert("can't add more player, you are in watching mode");
@@ -173,6 +257,7 @@
 				document.getElementById("placeShips").style.display = "block";
 				document.getElementById("notifContent").innerHTML = messages[0];
 				document.getElementById("saveGame").style.display = "block";
+				document.getElementById("userList").style.display = "none";
 				isEditing = true;
 				isWatching = false;
 			}
@@ -402,55 +487,35 @@
 				document.getElementById("placeShips").style.display = "none";
 				document.getElementById("notifContent").innerHTML = messages[1];
 				document.getElementById("saveGame").style.display = "none";
+				document.getElementById("userList").style.display = "block";
 				isEditing = false;
 				console.log(ship);
 				savingPosition();
+
+				updateStatusUser('edit');
 			}
 
-			// rabbitmq
+			function updateStatusUser(status) {
 
-			// Use SockJS
-			Stomp.WebSocketClass = SockJS;
+				var username = uri[3];
+				var gameId = uri[4];
 
-			// Connection parameters
-			var mq_username = "guest";
-			var mq_password = "guest";
-			var mq_vhost = "/";
-			var mq_url = 'http://localhost:15674/stomp';
+				var http = new XMLHttpRequest();
+				var url = "http://localhost:10001/_updateStatusUser/";
+				var params = status + ";" + username + ";" + gameId;
+				http.open("POST", url, true);
 
-			    //topic name
-			var mq_queue = "/topic/play-" + uri[4];
-			var mq_ctype = {"content-type":"text/plain"};
+				console.log(params);
 
-			// This is where we print incomoing messages
-			var output;
+				//capture success response
+				http.onreadystatechange = function() {
+					if (http.readyState == 4 && http.status == 200) {
+						console.log(http.responseText);
+					}
+				}
 
-			// This will be called upon successful connection
-			function on_connect() {
-				console.log('connected');
-				console.log(client);
-				console.log(mq_queue);
-			  	client.subscribe(mq_queue, on_message);
+				http.send(params);
 			}
-
-			// This will be called upon a connection error
-			function on_connect_error() {
-				console.log(client);
-				console.log("connection error");
-			}
-
-			// This will be called upon arrival of a message
-			function on_message(m) {
-			  	console.log('message received');
-			  	pos = m.body.trim();
-			  	document.getElementById(pos).style.background = "linear-gradient(rgba(41, 41, 41, 0.5), rgba(41, 41, 41, 0.5)), url('http://parallemon.com/battleship/seablock.png')";
-			}
-
-			// Create a client
-			var client = Stomp.client(mq_url);
-
-			client.connect(mq_username, mq_password, on_connect, on_connect_error, mq_vhost);
-
 
 			// positioning battleship & clicking battleship
 			function seaPos(pos) {
@@ -460,7 +525,9 @@
 
 				if (isPlaying == true) {
 					console.log("clicking");
-					client.send(mq_queue, {"content-type":"text/plain"}, pos);
+					var msg = {"name" : "clicking" , "username" : uri[3] , "clickedPos" : pos};
+
+					client.send(mq_queue, {"content-type":"text/plain"}, JSON.stringify(msg));
 					document.getElementById(pos).style.background = "linear-gradient(rgba(41, 41, 41, 0.5), rgba(41, 41, 41, 0.5)), url('http://parallemon.com/battleship/seablock.png')";
 				}
 
