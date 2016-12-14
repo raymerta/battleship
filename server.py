@@ -207,7 +207,7 @@ def parseRequest(conn):
 def handler(conn, addr):
 	# parsing uri request
 	pduResult = parseRequest(conn)
-	
+
 	# handling URI and print suitable pages
 	routingHandler(pduResult, conn, addr)
 
@@ -218,12 +218,39 @@ def handler(conn, addr):
 # ===================================================================
 
 # todo fix this part
-def findDuplicateName(username, serverId): 
+def findDuplicateName(username, serverId):
 	content = getAllUsers()
 
 	if (content != ""):
-		users = json.loads(content)
-		#todo
+		userInfo = json.loads(content)
+		users = []
+		for info in userInfo:
+			if (int(info["serverId"]) == int(serverId)):
+				users = info["users"]
+
+		if (users == []):
+			newUserAndServer = {"serverId" : serverId, "users": [{"username": username, "userCreated" : int(time.time()) }] }
+			userInfo.append(newUserAndServer)
+
+
+		else:
+			for user in users:
+				if (user["username"] == username):
+					print >> sys.stderr, "USERNAME ALREADY USED"
+			newUser = {"username": username, "userCreated" : int(time.time()) }
+			for info in userInfo:
+				if (int(info["serverId"]) == int(serverId)):
+					users.append(newUser)
+
+
+		content = json.dumps(userInfo)
+
+		fsource = 'users.json'
+		f = open(fsource, 'w')
+		f.write(content)
+		f.close()
+
+		return False
 
 	else:
 		#empty json file, proceed to create initial content
