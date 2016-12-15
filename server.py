@@ -149,8 +149,8 @@ def routingHandler(pduResult, conn, addr):
 			sendResponse(conn, component)
 
 	elif (addr[1] == '_updateEndWinningCondition'):
-		roomId = addr[2]
-		username = addr[3]
+		username = pduResult.content.strip().split(";")[0]
+		roomId = pduResult.content.strip().split(";")[1]
 
 		content = updateEndWinningCondition(username, roomId)
 

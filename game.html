@@ -68,13 +68,13 @@
 		<div class="blackdrop" id="winnerDrop" style="display: none">
 			<div class="newgamebox">
 				<p style="margin-bottom: 10px">This Game Winner:</p>
-				<h1 id="gameWinner"></h1>
+				<h1 id="gameWinner" style="font-size: 60px; margin-bottom: 40px;"></h1>
 				<a href="#" class="newgamesubmit" onclick="returnSession()">RETURN TO GAME LIST</a>
 				<div class="clearfix"></div>
 			</div>
 		</div>
 
-		<div id="popupnotifcontainer" style="position: fixed; bottom: 0"></div>
+		<div id="popupnotifcontainer" style="position: fixed; bottom: 0; z-index: 10"></div>
 
 		<script type="text/javascript">
 
@@ -144,12 +144,17 @@
 			  	if (msg.name == 'winner') {
 			  		notifHandling(msg.username + " is the winner", "good");
 			  		//blockade the game for renewal
+			  		document.getElementById("gameWinner").innerHTML = msg.username;
+			  		if (msg.name == uri[3]) {
+			  			document.getElementById("winnerDrop").style.display = "block";	
+			  		}
 			  	}
 
 			  	if (msg.name == 'defeated') {
 			  		notifHandling(msg.username + " is defeated", "normal");
-			  		removeDefeatedUser(msg.username);
-			  		checkWinningCondition();
+			  		if (msg.username != uri[3]) {
+			  			removeDefeatedUser(msg.username);	
+			  		}
 			  	}
 
 			  	if (msg.name == 'msgnotif') {
@@ -336,6 +341,7 @@
 			function checkWinningCondition() {
 				if (currPlayers.length == 1) {
 					console.log(currPlayers[0]);
+
 					var msg = {"name" : "winner" , "username" : currPlayers[0]};
 					client.send(mq_queue, {"content-type":"text/plain"}, JSON.stringify(msg));
 
@@ -344,9 +350,11 @@
 
 			}
 
-			function updateSessionWinner(username) {	
+			function updateSessionWinner(username) {
+				console.log(username);
 				var http = new XMLHttpRequest();
-				var url = "http://localhost:10001/_updateEndWinningCondition/" + uri[4] + '/' + username;
+				var url = "http://localhost:10001/_updateEndWinningCondition";
+				var params = uri[4] + ";" + username;
 				http.open("GET", url);
 
 				//capture success response
@@ -355,12 +363,12 @@
 						console.log(http.responseText);
 					}
 				}
-				http.send();
+				http.send(params);
 			};
 
 			function getUsernamePosition() {
 				var http = new XMLHttpRequest();
-				var url = "http://localhost:10001/_getUsernamePosition/" + uri[4] + '/' + uri[3];
+				var url = "http://localhost:10001/_getUsernamePosition/" + uri[4] + "/" + uri[3];
 				http.open("GET", url);
 
 				//capture success response
@@ -569,7 +577,6 @@
 
 				if (isPlaying == true && username != uri[3]) {
 
-
 					if (findOutHit(pos) == true) {
 						var inital = document.getElementById(pos).style.background;
 						var initBI = document.getElementById(pos).style.backgroundImage;
@@ -577,13 +584,17 @@
 						sendingHitPosition();
 
 						if (document.getElementById(pos).style.backgroundImage != initBI) {
-							totalHit++;	
+							totalHit++;
+							notifHandling("you got hit by " + username, "normal");
 						}
 						
 						//if all boats are sunk, broadcast this message to all users
 						if (totalHit == maxHit) {
 							var msg = {"name" : "defeated" , "username" : uri[3]};
 							client.send(mq_queue, {"content-type":"text/plain"}, JSON.stringify(msg));
+
+							removeDefeatedUser(msg.username);
+							checkWinningCondition();
 						}
 
 					} else {
@@ -821,7 +832,8 @@
 				//capture success response
 				http.onreadystatechange = function() {
 					if (http.readyState == 4 && http.status == 200) {
-						notifHandling("battleships position saved", "normal");
+						var msg = {"name" : "msgnotif" , "username" : uri[3], "message" : "ships position saved, " + uri[3] + " is ready to play" , "type": "good"};
+						client.send(mq_queue, {"content-type":"text/plain"}, JSON.stringify(msg));
 					}
 				}
 

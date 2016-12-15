@@ -214,13 +214,13 @@ Expected results: all ships are remains when back
 - toggle editing mode [done]
 - get list of player [done]
 - notification for game starting 
-- notification for player joining
+- notification for player joining [done]
 - notification for player turn [done]
 
 ### game logic 
 
-– if any ships were hit it should be visible for the player who triggered the shoot 
-– the suffering player should see his ship attacked, and he/she should see the origin (who did attack him) 
+– if any ships were hit it should be visible for the player who triggered the shoot [done]
+– the suffering player should see his ship attacked, and he/she should see the origin (who did attack him) [done]
 – the other player should not see this positive hit
 - Once the shoot is done by player the server must check the sink-conditions, in other words: if any ships were hit and if that hit made a ship sink (completely destroyed)
 - if any ships were sinked it should be visible for everyone at moment of sinking
