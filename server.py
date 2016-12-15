@@ -412,7 +412,21 @@ def getHitPosition(roomId):
 
 	#TODO return all users and position where they got hit
 
-	return True
+	fsource = 'hits.json'
+	f = open(fsource, 'r')
+	content = f.read()
+	f.close()
+
+	allPlayersInRoom = []
+
+	if content != '':
+		allPlayers = json.loads(content)
+		for player in allPlayers:
+			if int(player["gameRoomId"]) == int(roomId):
+				allPlayersInRoom.append(player)
+
+
+	return allPlayersInRoom
 
 def updateUserTurn(username, roomId):
 
