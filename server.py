@@ -463,7 +463,7 @@ def getGameStatus(roomId):
 			g["isPlaying"] = True
 
 	gameData = json.dumps(games)
-	fsource = 'game.json'
+	fsource = 'sessions.json'
 	f = open(fsource, 'w')
 	f.write(gameData)
 	f.close()
