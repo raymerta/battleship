@@ -343,7 +343,20 @@ def findDuplicateName(username, serverId):
 
 def updateEndWinningCondition(username, roomId):
 
-	#TODO update game session with this room ID, that isEnded is true, isPlaying is False, set username in parameters as winner (is winning true). return true if updated
+	sessions = json.loads(common.getAllSessions())
+	for session in sessions:
+		if (int(session['gameRoomId']) == int(roomId)):
+			session["isEnded"] = True
+			session["isPlaying"] = False
+			for user in session['users']:
+				if (user['username'] == username):
+					user['isWinning'] = True
+
+	sessionData = json.dumps(sessions)
+	fsource = 'sessions.json'
+	f = open(fsource, 'w')
+	f.write(sessionData)
+	f.close()
 
 	return True
 
