@@ -192,24 +192,42 @@ Expected results: all ships are remains when back
 
 - specify map size in new game [done]
 - load existing open map [done]
-- load existing game position
+- load existing game position [done]
 
 ### game page
 
 - toggle editing mode [done]
 - get list of player [done]
-- notification for game starting
+- notification for game starting 
 - notification for player joining
-- notification for player turn
+- notification for player turn [done]
+
+### game logic 
+
+– if any ships were hit it should be visible for the player who triggered the shoot 
+– the suffering player should see his ship attacked, and he/she should see the origin (who did attack him) 
+– the other player should not see this positive hit
+- Once the shoot is done by player the server must check the sink-conditions, in other words: if any ships were hit and if that hit made a ship sink (completely destroyed)
+- if any ships were sinked it should be visible for everyone at moment of sinking
+- player leave the game session if defeated
+- while waiting the player sees everything all ships of all players as well as the scores and the damaged ships (so called spectator mode)
+- Once the game session is finished the creator-player may restart the session.
+– in case the creator-player is leaving the game-session the server selects the new owner among the remaining players
+– in case only one player is involved in the game and the others already left, the game session should end
+– disconnecting should result in leaving the game session
+– in case the player did disconnect without leaving and he/she is not connected back for long time, then the creator player has liberty to withdraw the concerned player
+– in case the creator player did disconnect without leaving and he/she is not connecting back long enough, the server selects the new owner among the remaining players
+- the previous creator-player can still connect back with lost ownership of the game session
+– in case game session was finished at the time the user is reconnecting, he/she should be informed and suggested to create or join another session
 
 ## nice to have
 
 - [session] dynamic game session name [done]
 - [username] check error when put duplicate name, it requires multiple clicking 
 - [creategame] limit number of player and tile size
-- [game] change already positioned ship in the game
-- [game] detect ship collision placement
-- [game] change button color if all ship already placed
+- [game] change already positioned ship in the game 
+- [game] detect ship collision placement [done]
+- [game] change button color if all ship already placed 
 
 # Requirements
 - User starts the application, and can select what game server to join [done]
@@ -221,11 +239,11 @@ Expected results: all ships are remains when back
 - Once user has joined the game server, it can either create a new game session or join existing one. [done]
 - In case the user wants to create a new game session, he/she has need to provide the desired size of the battle field, then the new game field is created and the user has to position his ships on flat map (no obstacles, just water). Once the ships are positioned, the creator player should wait for someone to join his game session. The creator player must be notified each time new player joined with his game session. Once the creator player is satisfied with the number of players who have joined, he may trigger the start of a battle.[done]
 - In case users want to join the existing game session, he/she has to position his ships and wait for the master player to start the battle. [done]
-- Once the game session has a battle running the game server must preserve the order of players, allowing them to shoot one after the other. Each time the shoot is committed by a player, the server must notify the next one of his turn to shoot
-- Once the game session has a battle running the game server has to check the end-game condition, which is the situation where all the ships standing on the battlefield belong to only one player.
-- Once the shoot is done by player the server must check the hit-conditions
-  – if any ships were hit it should be visible for the player who triggered the shoot
-  – the suffering player should see his ship attacked, and he/she should see the origin (who did attack him)
+- Once the game session has a battle running the game server must preserve the order of players, allowing them to shoot one after the other. Each time the shoot is committed by a player, the server must notify the next one of his turn to shoot [done]
+- Once the game session has a battle running the game server has to check the end-game condition, which is the situation where all the ships standing on the battlefield belong to only one player. [done]
+- Once the shoot is done by player the server must check the hit-conditions [done]
+  – if any ships were hit it should be visible for the player who triggered the shoot 
+  – the suffering player should see his ship attacked, and he/she should see the origin (who did attack him) 
   – the other player should not see this positive hit
 - Once the shoot is done by player the server must check the sink-conditions, in other words: if any ships were hit and if that hit made a ship sink (completely destroyed)
   – if any ships were sinked it should be visible for everyone at moment of sinking
