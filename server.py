@@ -392,7 +392,7 @@ def updateHitPosition(roomId, username, pos):
 	hitsData = json.dumps(allPlayersAllHits)
 	fsource = 'hits.json'
 	f = open(fsource, 'w')
-	f.write(sessionData)
+	f.write(hitsData)
 	f.close()
 
 	return True
@@ -406,7 +406,20 @@ def getHitPosition(roomId):
 
 def updateUserTurn(username, roomId):
 
-	#TODO, in sessions.json change isTurn of this username to true
+	sessions = json.loads(common.getAllSessions())
+	for session in sessions:
+		if session["gameRoomId"] == roomId:
+			for user in session["users"]:
+				if user["username"] == username:
+					user["isTurn"] = True
+				else:
+					user["isTurn"] = False
+
+	sessionData = json.dumps(sessions)
+	fsource = 'sessions.json'
+	f = open(fsource, 'w')
+	f.write(sessionData)
+	f.close()
 
 	return True
 
