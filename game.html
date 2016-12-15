@@ -23,7 +23,7 @@
 
 				<h1 class="servername" id="gameName"></h1>
 
-				<div id="placeShips" class="gamemode">
+				<div id="placeShips" class="gamemode" style="display: none;">
 					<p style="margin-bottom: 40px;">List of Ships:</p>
 					<a href="#" class="ship battleship" id="battleship" onclick="selectShip('battleship')">Battleship (1)</a>
 					<a href="#" class="ship cruiser" id="cruiser" onclick="selectShip('cruiser')">Cruiser (2)</a>
@@ -46,7 +46,7 @@
 
 		<a href="#" id="saveGame"><div class="gamebutton" onclick="saveGame()">Start Game</div></a>
 
-		<div class="blackdrop" id="blackDrop">
+		<div class="blackdrop" id="blackDrop" style="display: none;">
 			<div class="newgamebox">
 				<p style="margin-bottom: 10px">Game Information:</p>
 				<h1 id="popupGameName"></h1>
@@ -61,6 +61,15 @@
 					</tr>
 				</table>
 				<a href="#" class="newgamecancel" onclick="watch()">WATCH</a><a href="#" class="newgamesubmit" id="pJoin" onclick="join()">JOIN</a>
+				<div class="clearfix"></div>
+			</div>
+		</div>
+
+		<div class="blackdrop" id="winnerDrop" style="display: none">
+			<div class="newgamebox">
+				<p style="margin-bottom: 10px">This Game Winner:</p>
+				<h1 id="gameWinner"></h1>
+				<a href="#" class="newgamesubmit" onclick="returnSession()">RETURN TO GAME LIST</a>
 				<div class="clearfix"></div>
 			</div>
 		</div>
@@ -81,6 +90,7 @@
 			var isPlaying = false;
 
 			var currUsers = [];
+			var currPlayers = [];
 			var currTurn = 0;
 
 			var server = '';
@@ -136,8 +146,13 @@
 			  		attackingLogic(msg.clickedPos, msg.username);
 			  	}
 
+			  	if (msg.name == 'winner') {
+			  		alert(msg.username + " is the winner");
+			  	}
+
 			  	if (msg.name == 'defeated') {
 			  		alert(msg.username + " is defeated");
+			  		removeDefeatedUser(msg.username);
 			  		checkWinningCondition();
 			  	}
 
@@ -164,8 +179,14 @@
 			  		
 			  		// game started and set the turn
 			  		if (gameStarted()) {
+
+			  			for (var i = 0; i < currUsers.length; i++) {
+							currPlayers.push(currUsers[i].username);		  				
+			  			}
+
 			  			isPlaying = true;
-			  			document.getElementById("notifContent").innerHTML = messages[2] + currUsers[currTurn].username;
+			  			document.getElementById("notifContent").innerHTML = messages[2] + currPlayers[currTurn];
+			  			document.getElementById("user-" + currPlayers[currTurn]).style.border = "3px solid white";
 			  		}
 			  	}
 
@@ -222,8 +243,8 @@
 							var users = '';
 							for (var i = 0; i < game.users.length; i ++) {
 
-								currUsers.push({ "username" : game.users[i].username, "isPlaying" : false});
-								users = users + '<a href="#" class="user" id="user-' + username + '" style="background: ' + colors[i] + '; border: 3px solid ' + colors[i] + ';">' + game.users[i].username + '</a>'; 
+								currUsers.push({ "username" : game.users[i].username, "isPlaying" : game.users[i].isPlaying, "isDefeated" : game.users[i].isDefeated, "isWinning" : game.users[i].isWinning});
+								users = users + '<a href="#" class="user" id="user-' + game.users[i].username + '" style="background: ' + colors[i] + '; border: 3px solid ' + colors[i] + ';">' + game.users[i].username + '</a>'; 
 							}
 
 							document.getElementById("displayUser").innerHTML = users;
@@ -239,6 +260,7 @@
 							var user = getUserInfo(game.users, uri[3]);
 							
 							if (user == '') {
+								document.getElementById("blackDrop").style.display = "block";
 								document.getElementById("placeShips").style.display = "none";
 								document.getElementById("notifContent").innerHTML = messages[4];
 								document.getElementById("saveGame").style.display = "none";
@@ -251,14 +273,23 @@
 
 								document.getElementById("blackDrop").style.display = "none";
 								document.getElementById("placeShips").style.display = "none";
-								document.getElementById("notifContent").innerHTML = messages[2] + currUsers[currTurn].username;
-								document.getElementById("saveGame").style.display = "none";
 								document.getElementById("userList").style.display = "block";
+								document.getElementById("saveGame").style.display = "none";
+
+								for (var i = 0; i < currUsers.length; i++) {
+									currPlayers.push(currUsers[i].username);		  				
+					  			}
+								
+								document.getElementById("notifContent").innerHTML = messages[2] + currPlayers[currTurn];
+								document.getElementById("user-" + currPlayers[currTurn]).style.border = "3px solid white";
+
+								
 								isEditing = false;
 								isWatching = false;
 								isPlaying = true;
 							} else {
 								document.getElementById("blackDrop").style.display = "none";
+								document.getElementById("placeShips").style.display = "block";
 							}
 						}
 					}
@@ -267,9 +298,55 @@
 				http.send();
 			}
 
-			function checkWinningCondition() {
-				console.log(currUsers);
+			function removeDefeatedUser(username) {
+				//set defeated current User
+				for (var i = 0; i < currUsers.length; i++) {
+					if (currUsers[i].username == username) {
+						currUsers[i].isDefeated = true;
+					}
+				}
+
+				// remove from the list
+				for (var i = 0; i < currPlayers.length; i++) {
+					if (currPlayers[i] == username) {
+						currPlayers.splice(i,1);
+					}
+				}
+
+				//set name to grey
+				document.getElementById("user-" + username).style.background = "#55626e";
+				document.getElementById("user-" + username).style.border = "3px solid #55626e";
+
+				if (username == uri[3]) {
+					isWatching = true;
+					isPlaying = false;
+				}
 			}
+
+			function checkWinningCondition() {
+				if (currPlayers.length == 1) {
+					console.log(currPlayers[0]);
+					var msg = {"name" : "winner" , "username" : currPlayers[0]};
+					client.send(mq_queue, {"content-type":"text/plain"}, JSON.stringify(msg));
+
+					updateSessionWinner(currPlayers[0]);
+				}
+
+			}
+
+			function updateSessionWinner(username) {	
+				var http = new XMLHttpRequest();
+				var url = "http://localhost:10001/_updateEndWinningCondition/" + uri[4] + '/' + username;
+				http.open("GET", url);
+
+				//capture success response
+				http.onreadystatechange = function() {
+					if (http.readyState == 4 && http.status == 200) {
+						console.log(http.responseText);
+					}
+				}
+				http.send();
+			};
 
 			function getUsernamePosition() {
 				var http = new XMLHttpRequest();
@@ -358,8 +435,6 @@
 					}
 				}
 
-				console.log(currUsers);
-
 				return rs;
 			}
 
@@ -437,12 +512,16 @@
 
 			function attackingLogic(pos, username) {
 
+				var prevColor = document.getElementById("user-" + currPlayers[currTurn]).style.backgroundColor;
+				document.getElementById("user-" + currPlayers[currTurn]).style.border = "3px solid " + prevColor;
+
 				currTurn++;
-				if (currTurn == currUsers.length) {
+				if (currTurn >= currPlayers.length) {
 					currTurn = 0;
 				}
 
-				document.getElementById("notifContent").innerHTML = messages[2] + currUsers[currTurn].username;
+				document.getElementById("notifContent").innerHTML = messages[2] + currPlayers[currTurn];
+				document.getElementById("user-" + currPlayers[currTurn]).style.border = "3px solid white";
 
 				if (isPlaying == true && username != uri[3]) {
 
@@ -476,7 +555,6 @@
 		  				document.getElementById(pos).style.background = initial;
 		  			}, 300);
 		  		}
-
 
 			}
 
@@ -768,7 +846,7 @@
 				if (isPlaying == true) {
 					console.log("clicking");
 
-					if (currUsers[currTurn].username == uri[3]) {
+					if (currPlayers[currTurn] == uri[3]) {
 						var msg = {"name" : "clicking" , "username" : uri[3] , "clickedPos" : pos};
 						client.send(mq_queue, {"content-type":"text/plain"}, JSON.stringify(msg));
 					} else {
