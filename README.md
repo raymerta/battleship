@@ -67,7 +67,7 @@ expected result: can create username, redirected to game session page
 expected result: can't create username, stay in the page with error message,
 showing the error message 'Given username is already taken. Please choose another.'
 
-## Insert same username to different server [Doesn't pass, it shows Given username is already taken. Please choose another.]
+## Insert same username to different server [Done]
 
 - in insert username page, insert new username that never exist before
 - press submit button
@@ -112,35 +112,14 @@ Expected result: Show warning message that the number of players or tile size ex
 
 Expected result: New player joined the game if there is free space, and can select the buttleship and the position.
 
-## select existing game, game is running , and choose cancel
+## select existing game, game is not running yet, and join but somebody already join [Done]
 
-- open Chrome browser, type 'http://localhost:10001/'
-- pick one of the servers
-- insert unique username
-- select a server
-- Click Join and start playing
-- Click Cancel
+- Player 1,2,3 open Chrome browser, type 'http://localhost:10001/'
+- Player 1 create the server
+- Player 2 Join the game
+- Player 3 Join the game
 
-Expected result:all ships have to be removed from the game field,
-In case only one player is involved in the game and the others already left, the
-game session should end
-
-## select existing game, game is not running yet, and choose watch [Nothing happened when click watch]
-
-- open Chrome browser, type 'http://localhost:10001/'
-- pick one of the servers
-- insert unique username
-- select a server that it's game not running yet
-- Click watch
-
-Expected result: got to game page in editing mode
-
-## select existing game, game is not running yet, and join
-
-Expected result: got to game page in editing mode
-
-
-## select existing game, game is not running yet, and join but somebody already join
+Expected results: Player 3 can join the game and start playing if number of players limited didn't exceeded
 
 ## The creator player notified for new player joined with his game session. [Done]
 
@@ -153,7 +132,7 @@ Expected result: got to game page in editing mode
 
 Expected result: Server creater received a notification informing new player joined the game session
 
-## Showing players name within the game session
+## Showing players name within the game session [Done]
 
 - Player 1 open Chrome browser, type 'http://localhost:10001/'
 - pick one of the servers
@@ -186,7 +165,7 @@ Expected results: - Player 2 can't shoot before Player 1
 Expected reults: - The hitted ship visible to Player 1 (Burn image)
                  - Player 2 can see his ship attacked, and see who did the attack
                  
-## Check disconnect and connect the game session
+## Check refresh the game session [Done]
 
 - open Chrome browser, type 'http://localhost:10001/'
 - pick one of the servers
@@ -194,10 +173,9 @@ Expected reults: - The hitted ship visible to Player 1 (Burn image)
 - select a server 
 - Click Join
 - Start playing
-- Close the tab from the browser
-- Back to the game session [http://localhost:10001/game/royal-navy/ahmed/1]
+- Refresh the browser
 
-Expected results: all ships are remains when back
+Expected results: all ships are remained
 
 ## Announcing the winner [Done]
 
@@ -208,6 +186,14 @@ Expected results: all ships are remains when back
 
 Expected results: The winner is the last one standing on the sea battlefield, and it notified.
 
+## Notification of started the game [Done]
+
+- Player 1 create a server and position his/her ships
+- Player 2 join the server and position his/her ships
+- Player 1 clicked start game
+- Player 2 clicked start game
+
+Expected result: a pop-up notification appear the left bottom side says GAME STARTED
 
 
 ## Special Case
