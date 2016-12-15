@@ -499,14 +499,18 @@
 
 			function selectShip(shipName) {
 
-				if (ship[shipName].placed < ship[shipName].qty) {
-					if (shipSelected != "") {
-						document.getElementById(shipSelected).style.border = "3px solid " + ship[shipSelected].color;
+				if (secondPos.length < 1) {
+					if (ship[shipName].placed < ship[shipName].qty) {
+						if (shipSelected != "") {
+							document.getElementById(shipSelected).style.border = "3px solid " + ship[shipSelected].color;
+						}
+						document.getElementById(shipName).style.border = "3px solid white";
+						shipSelected = shipName;
+					} else {
+						alert("maximum number of ship reached");
 					}
-					document.getElementById(shipName).style.border = "3px solid white";
-					shipSelected = shipName;
 				} else {
-					alert("maximum number of ship reached");
+					alert("can't change before placing ship");
 				}
 			}
 
@@ -592,6 +596,8 @@
 						return true;
 					}
 				}
+
+				return false;
 			}
 
 			function sendingHitPosition() {
@@ -600,6 +606,8 @@
 
 			// create lighter color for dropping ships
 			function droppingShipRange(pos) {
+
+				console.log(ship);
 
 				//TODO do not add white range if it's near other existing ship
 				var modulo = pos % mapSize;
@@ -611,32 +619,68 @@
 				if ((modulo - (ship[shipSelected].size - 1)) >= 0) {
 					newPos = pos - 1;
 
-					secondPos.push(newPos);
-					document.getElementById(newPos).style.background = "url(\"http://parallemon.com/battleship/seasec.png\")";
+					var unexpected = 0;
+					for (var i = 0; i < (ship[shipSelected].size - 1); i++) {
+						if (findOutHit(newPos - i) == true) {
+							unexpected++;
+						}
+					}
+
+					if (unexpected < 1) {
+						secondPos.push(newPos);
+						document.getElementById(newPos).style.background = "url(\"http://parallemon.com/battleship/seasec.png\")";
+					}
 				}
 
 				//right
 				if ((modulo + (ship[shipSelected].size - 1)) < mapSize) {
 					newPos = pos + 1;
 
-					secondPos.push(newPos);
-					document.getElementById(newPos).style.background = "url(\"http://parallemon.com/battleship/seasec.png\")";
+					var unexpected = 0;
+					for (var i = 0; i < (ship[shipSelected].size - 1); i++) {
+						if (findOutHit(newPos + i) == true) {
+							unexpected++;
+						}
+					}
+
+					if (unexpected < 1) {
+						secondPos.push(newPos);
+						document.getElementById(newPos).style.background = "url(\"http://parallemon.com/battleship/seasec.png\")";
+					}
 				}
 
 				//top
 				if ((div - (ship[shipSelected].size - 1)) >= 0) {
 					newPos = (div - 1) * mapSize + modulo;
 
-					secondPos.push(newPos);
-					document.getElementById(newPos).style.background = "url(\"http://parallemon.com/battleship/seasec.png\")";
+					var unexpected = 0;
+					for (var i = 0; i < (ship[shipSelected].size - 1); i++) {
+						if (findOutHit((div - (i + 1)) * mapSize + modulo) == true) {
+							unexpected++;
+						}
+					}
+
+					if (unexpected < 1) {
+						secondPos.push(newPos);
+						document.getElementById(newPos).style.background = "url(\"http://parallemon.com/battleship/seasec.png\")";
+					}
 				}
 
 				//bottom
 				if ((div + (ship[shipSelected].size - 1)) >= 0) {
 					newPos = (div + 1) * mapSize + modulo;
 
-					secondPos.push(newPos);
-					document.getElementById(newPos).style.background = "url(\"http://parallemon.com/battleship/seasec.png\")";
+					var unexpected = 0;
+					for (var i = 0; i < (ship[shipSelected].size - 1); i++) {
+						if (findOutHit((div + (i + 1)) * mapSize + modulo) == true) {
+							unexpected++;
+						}
+					}
+
+					if (unexpected < 1) {
+						secondPos.push(newPos);
+						document.getElementById(newPos).style.background = "url(\"http://parallemon.com/battleship/seasec.png\")";
+					}
 				}
 			}
 
@@ -688,22 +732,26 @@
 							alert("you must select in destined area");
 						}
 					} else {
-						document.getElementById(pos).style.background = ship[shipSelected].color;
-						ship[shipSelected].coor.push(pos);
+						if (findOutHit(pos) != true) {
+							document.getElementById(pos).style.background = ship[shipSelected].color;
+							ship[shipSelected].coor.push(pos);
 
-						if (ship[shipSelected].size > 1) {
-							firstPos = pos;
-							droppingShipRange(pos);
+							if (ship[shipSelected].size > 1) {
+								firstPos = pos;
+								droppingShipRange(pos);
+							} else {
+								//reset button
+								document.getElementById(shipSelected).style.border = "3px solid " + ship[shipSelected].color;
+
+								//increase placed number
+								ship[shipSelected].placed = ship[shipSelected].placed + 1;
+								document.getElementById(shipSelected).innerHTML = shipSelected + " (" + (ship[shipSelected].qty - ship[shipSelected].placed) + ")";
+
+								//reset if ship selected already all placed
+								shipSelected = '';
+							}
 						} else {
-							//reset button
-							document.getElementById(shipSelected).style.border = "3px solid " + ship[shipSelected].color;
-
-							//increase placed number
-							ship[shipSelected].placed = ship[shipSelected].placed + 1;
-							document.getElementById(shipSelected).innerHTML = shipSelected + " (" + (ship[shipSelected].qty - ship[shipSelected].placed) + ")";
-
-							//reset if ship selected already all placed
-							shipSelected = '';
+							alert("must not collide with other ships");
 						}
 					}
 
