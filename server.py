@@ -373,6 +373,18 @@ def getHitPosition(roomId):
 
 	return True
 
+def updateUserTurn(username, roomId):
+
+	#TODO, in sessions.json change isTurn of this username to true
+
+	return True
+
+def updateDefeatedUser(username, roomId):
+
+	#TODO, in sessions.json change isDefeated of this username to true
+
+	return True
+
 
 gameRoomName = ['Atlantic Ocean', 'Arctic Ocean', 'Indian Ocean', 'Pacific Ocean', 'Norwegian Sea', 'North Sea', 'Aegean Sea', 'Southern Ocean', 'Arabian Sea', 'East China Sea']
 

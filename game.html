@@ -136,11 +136,16 @@
 			  		attackingLogic(msg.clickedPos, msg.username);
 			  	}
 
+			  	if (msg.name == 'defeated') {
+			  		alert(msg.username + " is defeated");
+			  		checkWinningCondition();
+			  	}
+
 				if (msg.name == 'add_user') {
 			  		var username = msg.username;
 			  		var status = msg.isPlaying;
 
-			  		currUsers.push({ "username" : username, "isPlaying" : false});
+			  		currUsers.push({ "username" : username, "isPlaying" : false, "isDefeated" : false, "isWinning" : false});
 
 			  		document.getElementById("displayUser").innerHTML = document.getElementById("displayUser").innerHTML + '<a href="#" class="user" id="user-' + username + '" style="background: ' + colors[currUsers.length - 1] + '; border: 3px solid ' + colors[currUsers.length - 1] + ';">' + username + '</a>';
 			  	}
@@ -417,12 +422,29 @@
 			}
 
 			function attackingLogic(pos, username) {
+
+				currTurn++;
+				if (currTurn == currUsers.length) {
+					currTurn = 0;
+				}
+
+				document.getElementById("notifContent").innerHTML = messages[2] + currUsers[currTurn].username;
+
 				if (isPlaying == true && username != uri[3]) {
+
 
 					if (findOutHit(pos) == true) {
 						var inital = document.getElementById(pos).style.background;
 						document.getElementById(pos).style.backgroundImage = "url('http://parallemon.com/battleship/fire-black.png')";
 						sendingHitPosition();
+						totalHit++;
+
+						//if all boats are sunk, broadcast this message to all users
+						if (totalHit == maxHit) {
+							var msg = {"name" : "defeated" , "username" : uri[3]};
+							client.send(mq_queue, {"content-type":"text/plain"}, JSON.stringify(msg));
+						}
+
 					} else {
 						document.getElementById(pos).style.background = "linear-gradient(rgba(41, 41, 41, 0.5), rgba(41, 41, 41, 0.5)), url('http://parallemon.com/battleship/seablock.png')";
 					}
@@ -436,6 +458,8 @@
 		  				document.getElementById(pos).style.background = initial;
 		  			}, 300);
 		  		}
+
+
 			}
 
 			function findOutHit(pos) {
@@ -721,18 +745,17 @@
 			function seaPos(pos) {
 				if (isEditing == true) {
 					placementLogic(pos);
-
-					currTurn++;
-					if (currTurn )
-
-					document.getElementById("notifContent").innerHTML = messages[2] + currUsers[currTurn].username;
 				}
 
 				if (isPlaying == true) {
 					console.log("clicking");
 
-					var msg = {"name" : "clicking" , "username" : uri[3] , "clickedPos" : pos};
-					client.send(mq_queue, {"content-type":"text/plain"}, JSON.stringify(msg));
+					if (currUsers[currTurn] == uri[3]) {
+						var msg = {"name" : "clicking" , "username" : uri[3] , "clickedPos" : pos};
+						client.send(mq_queue, {"content-type":"text/plain"}, JSON.stringify(msg));
+					} else {
+						alert('not your turn');
+					}
 				}
 
 				if (isWatching == true) {
