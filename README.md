@@ -125,7 +125,13 @@ Expected result:all ships have to be removed from the game field,
 In case only one player is involved in the game and the others already left, the
 game session should end
 
-## select existing game, game is not running yet, and choose watch
+## select existing game, game is not running yet, and choose watch [Nothing happened when click watch]
+
+- open Chrome browser, type 'http://localhost:10001/'
+- pick one of the servers
+- insert unique username
+- select a server that it's game not running yet
+- Click watch
 
 Expected result: got to game page in editing mode
 
@@ -136,7 +142,7 @@ Expected result: got to game page in editing mode
 
 ## select existing game, game is not running yet, and join but somebody already join
 
-## The creator player notified for new player joined with his game session.
+## The creator player notified for new player joined with his game session. [Done]
 
 - open Chrome browser, type 'http://localhost:10001/'
 - pick one of the servers
@@ -147,7 +153,7 @@ Expected result: got to game page in editing mode
 
 Expected result: Server creater received a notification informing new player joined the game session
 
-## start shooting each other
+## start shooting each other [Done]
 
 - Game session started
 - Player 1 shoot - 1st attendence
@@ -157,12 +163,12 @@ Expected results: - Player 2 can't shoot before Player 1
                   - The serve notify the next one of his turn to shoot
                   
                                    
-## Check hit effect
+## Check hit effect [Done]
 
 - Game session started
 - Player 1 hit Player's 2 ship
 
-Expected reults: - The hitted ship visible to Player 1
+Expected reults: - The hitted ship visible to Player 1 (Burn image)
                  - Player 2 can see his ship attacked, and see who did the attack
                  
 ## Check disconnect and connect the game session
@@ -178,7 +184,14 @@ Expected reults: - The hitted ship visible to Player 1
 
 Expected results: all ships are remains when back
 
+## Announcing the winner [Done]
 
+- All players starts the game
+- They start shooting each other by selecting the blue tiles
+- Ships will start blinking, one after one
+- All ships blinked for one of the players
+
+Expected results: The winner is the last one standing on the sea battlefield, and it notified.
 
 
 ## Special Case
