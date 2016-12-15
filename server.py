@@ -201,7 +201,7 @@ def routingHandler(pduResult, conn, addr):
 		tiles = pduResult.content.strip().split(";")[3]
 		player = pduResult.content.strip().split(";")[4]
 
-		gameCreated = createGameRoom(tiles, player, serverId, username)
+		gameCreated = common.createGameRoom(tiles, player, serverId, username)
 
 		if (gameCreated > 0):
 			content = 'http://localhost:10001/game/%s/%s/%s' % (serverUrl, username, gameCreated)
@@ -335,8 +335,6 @@ def findDuplicateName(username, serverId):
 
 		return thereIsADuplicate
 
-
-
 	else:
 		#empty json file, proceed to create initial content
 		data = [{"serverId" : serverId, "users": [{"username": username, "userCreated" : int(time.time()) }] }]
@@ -453,45 +451,6 @@ def updateDefeatedUser(username, roomId):
 
 	return True
 
-
-gameRoomName = ['Atlantic Ocean', 'Arctic Ocean', 'Indian Ocean', 'Pacific Ocean', 'Norwegian Sea', 'North Sea', 'Aegean Sea', 'Southern Ocean', 'Arabian Sea', 'East China Sea']
-
-def createGameRoom(tiles, player, serverId, username):
-	content = common.getAllSessions()
-
-	# generate random game room name
-	roomType = random.randint(0, (len(gameRoomName) - 1))
-	roomName = gameRoomName[roomType]
-
-	if (content != ""):
-		sessions = json.loads(content)
-		roomId = len(sessions) + 1
-
-		data = {"serverId" : serverId, "numPlayers" : player, "size" : tiles, "creator": username , "roomName": roomName, "roomCreated": int(time.time()), "isPlaying": False, "isEnded" : False , "gameRoomId" : roomId, "users": [{"username": username, "isTurn" : False, "isDefeated" : False, "isWinning" : False, "isPlaying" : False}] }
-		sessions.append(data)
-
-		dataObject = json.dumps(sessions)
-
-		fsource = 'sessions.json'
-		f = open(fsource, 'w')
-		f.write(dataObject)
-		f.close()
-
-		return roomId
-
-	else:
-		#empty json file, proceed to create initial content
-		data = [{"serverId" : serverId, "numPlayers" : player, "size" : tiles, "creator": username , "roomName": roomName, "roomCreated": int(time.time()), "isPlaying": False, "isEnded" : False , "gameRoomId" : 1, "users": [{"username": username, "isTurn" : False, "isDefeated" : False, "isWinning" : False, "isPlaying" : False}] }]
-		dataObject = json.dumps(data)
-
-		fsource = 'sessions.json'
-		f = open(fsource, 'w')
-		f.write(dataObject)
-		f.close()
-
-		#return user ID number
-		return 1
-
 def joinGame(gameId, username):
 	game = getGameInfo(gameId)
 	sessions = common.getAllSessions()
@@ -563,11 +522,10 @@ def getGameStatus(roomId):
 
 	return True
 
+
 def saveGamePosition(obj):
 	game = getGamePosition(obj['gameId'])
 	content = getAllGamePosition()
-
-
 
 	if (content != ''):
 		games = json.loads(content)

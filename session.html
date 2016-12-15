@@ -56,6 +56,61 @@
 			var server = '';
 			var uri = window.location.pathname.split('/');
 
+			//Rabbit MQ Place
+
+			// Use SockJS
+			Stomp.WebSocketClass = SockJS;
+
+			// Connection parameters
+			var mq_username = "guest";
+			var mq_password = "guest";
+			var mq_vhost = "/";
+			var mq_url = 'http://localhost:15674/stomp';
+
+			    //topic name
+			var mq_queue = "/topic/game-" + uri[2];
+			var mq_server = "/topic/server-" + uri[2];
+			var mq_ctype = {"content-type":"text/plain"};
+
+			// This is where we print incomoing messages
+			var output;
+
+			// This will be called upon successful connection
+			function on_connect() {
+				console.log('connected');
+			  	client.subscribe(mq_queue, on_message);
+			}
+
+			// This will be called upon a connection error
+			function on_connect_error() {
+				console.log(client);
+				console.log("connection error");
+			}
+
+			// This will be called upon arrival of a message
+			function on_message(m) {
+			  	console.log('message received');
+
+				game = JSON.parse(m.body.trim())
+				console.log(game);
+
+				var gameList = '';
+				for (var i = 0; i < game.length; i++) {
+					var gName = game[i].roomName;
+					gameList = gameList + '<a href="http://localhost:10001/game/' + server.serverUrl + '/' + uri[3] + '/' + game[i].gameRoomId + '"><div class="gamebutton">' + game[i].roomName + '</div>';
+				}
+
+				document.getElementById("gameList").innerHTML = gameList;
+
+			}
+
+			// Create a client
+			var client = Stomp.client(mq_url);
+
+			client.connect(mq_username, mq_password, on_connect, on_connect_error, mq_vhost);
+
+			//========================
+
 			function getServerDetail() {	
 				var http = new XMLHttpRequest();
 				var url = "http://localhost:10001/_getservername/" + uri[2];
@@ -135,62 +190,10 @@
 					}
 				}
 
+				client.send(mq_server, {"content-type":"text/plain"}, params);
 				http.send(params);	
 			}
 
-			//Rabbit MQ Place
-
-			// Use SockJS
-			Stomp.WebSocketClass = SockJS;
-
-			// Connection parameters
-			var mq_username = "guest";
-			var mq_password = "guest";
-			var mq_vhost = "/";
-			var mq_url = 'http://localhost:15674/stomp';
-
-			    //topic name
-			var mq_queue = "/topic/game-" + uri[2];
-			var mq_ctype = {"content-type":"text/plain"};
-
-			// This is where we print incomoing messages
-			var output;
-
-			// This will be called upon successful connection
-			function on_connect() {
-				console.log('connected');
-				console.log(client);
-				console.log(mq_queue);
-			  	client.subscribe(mq_queue, on_message);
-			}
-
-			// This will be called upon a connection error
-			function on_connect_error() {
-				console.log(client);
-				console.log("connection error");
-			}
-
-			// This will be called upon arrival of a message
-			function on_message(m) {
-			  	console.log('message received');
-
-				game = JSON.parse(m.body.trim())
-				console.log(game);
-
-				var gameList = '';
-				for (var i = 0; i < game.length; i++) {
-					var gName = game[i].roomName;
-					gameList = gameList + '<a href="http://localhost:10001/game/' + server.serverUrl + '/' + uri[3] + '/' + game[i].gameRoomId + '"><div class="gamebutton">' + game[i].roomName + '</div>';
-				}
-
-				document.getElementById("gameList").innerHTML = gameList;
-
-			}
-
-			// Create a client
-			var client = Stomp.client(mq_url);
-
-			client.connect(mq_username, mq_password, on_connect, on_connect_error, mq_vhost);
 
 		</script>
 
