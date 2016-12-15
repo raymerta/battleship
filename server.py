@@ -423,6 +423,19 @@ def getGameStatus(roomId):
 			return False
 
 	print >> sys.stderr, "game is ready"
+	game["isPlaying"] = True
+
+	games = json.loads(common.getAllSessions())
+	for game in games:
+		if (int(game['gameRoomId']) == int(roomId)):
+			game["isPlaying"] = True
+
+	gameData = json.dumps(games)
+	fsource = 'game.json'
+	f = open(fsource, 'w')
+	f.write(gameData)
+	f.close()
+
 	return True
 
 def saveGamePosition(obj):
@@ -544,7 +557,7 @@ def main():
 		while True:
 			conn, addr = server.accept()
 
-			# checking connected client ip address
+			# king connected client ip address
 			print >> sys.stderr, 'client connected with ip :  %s' % str(addr)
 
 			#start threading
