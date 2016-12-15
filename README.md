@@ -153,6 +153,21 @@ Expected result: got to game page in editing mode
 
 Expected result: Server creater received a notification informing new player joined the game session
 
+## Showing players name within the game session
+
+- Player 1 open Chrome browser, type 'http://localhost:10001/'
+- pick one of the servers
+- insert unique username
+- select 'New Game'
+- Specefiy Number of players/ Game Tile Size (within the limit) and click Sumbit
+- Player 2 open Chrome browser, type 'http://localhost:10001/'
+- pick one of the servers
+- insert unique username
+- select a server
+- Click Join
+
+Expected result: Both players are showing their names and their enemy
+
 ## start shooting each other [Done]
 
 - Game session started
@@ -192,6 +207,7 @@ Expected results: all ships are remains when back
 - All ships blinked for one of the players
 
 Expected results: The winner is the last one standing on the sea battlefield, and it notified.
+
 
 
 ## Special Case
