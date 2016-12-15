@@ -180,7 +180,7 @@
 				var gameList = '';
 				for (var i = 0; i < game.length; i++) {
 					var gName = game[i].roomName;
-					gameList = gameList + '<a href="http://localhost:10001/game/' + server.serverName + '/' + uri[3] + '/' + game[i].gameRoomId + '"><div class="gamebutton">' + game[i].roomName + '</div>';
+					gameList = gameList + '<a href="http://localhost:10001/game/' + server.serverUrl + '/' + uri[3] + '/' + game[i].gameRoomId + '"><div class="gamebutton">' + game[i].roomName + '</div>';
 				}
 
 				document.getElementById("gameList").innerHTML = gameList;
