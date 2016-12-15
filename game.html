@@ -69,7 +69,16 @@
 			<div class="newgamebox">
 				<p style="margin-bottom: 10px">This Game Winner:</p>
 				<h1 id="gameWinner" style="font-size: 60px; margin-bottom: 40px;"></h1>
-				<a href="#" class="newgamesubmit" onclick="returnSession()">RETURN TO GAME LIST</a>
+				<a id="winnerDropLink" href="#" class="newgamesubmit">RETURN TO GAME LIST</a>
+				<div class="clearfix"></div>
+			</div>
+		</div>
+
+		<div class="blackdrop" id="loserDrop" style="display: none">
+			<div class="newgamebox">
+				<p style="margin-bottom: 10px">Game Status : </p>
+				<h1 style="font-size: 60px; margin-bottom: 40px;">GAME OVER</h1>
+				<a id="loserDropLink" href="#" class="newgamesubmit">RETURN TO GAME LIST</a>
 				<div class="clearfix"></div>
 			</div>
 		</div>
@@ -145,8 +154,9 @@
 			  		notifHandling(msg.username + " is the winner", "good");
 			  		//blockade the game for renewal
 			  		document.getElementById("gameWinner").innerHTML = msg.username;
-			  		if (msg.name == uri[3]) {
+			  		if (msg.username == uri[3]) {
 			  			document.getElementById("winnerDrop").style.display = "block";	
+			  			document.getElementById("winnerDropLink").href = "http://localhost:10001/sessions/" + uri[2] + "/" + uri[3];
 			  		}
 			  	}
 
@@ -154,6 +164,9 @@
 			  		notifHandling(msg.username + " is defeated", "normal");
 			  		if (msg.username != uri[3]) {
 			  			removeDefeatedUser(msg.username);	
+			  		} else {			  	
+			  			document.getElementById("loserDrop").style.display = "block";	
+			  			document.getElementById("loserDropLink").href = "http://localhost:10001/sessions/" + uri[2] + "/" + uri[3];
 			  		}
 			  	}
 
@@ -193,8 +206,7 @@
 			  			document.getElementById("notifContent").innerHTML = messages[2] + currPlayers[currTurn];
 			  			document.getElementById("user-" + currPlayers[currTurn]).style.border = "3px solid white";
 
-			  			var msg = {"name" : "msgnotif" , "username" : uri[3], "message" : "GAME STARTED", "type": "good"};
-						client.send(mq_queue, {"content-type":"text/plain"}, JSON.stringify(msg));
+			  			notifHandling("GAME STARTED", "good");
 			  		}
 			  	}
 
@@ -210,7 +222,7 @@
 			function getServerDetail() {
 				var http = new XMLHttpRequest();
 				var url = "http://localhost:10001/_getservername/" + uri[2];
-				http.open("GET", url);
+				http.open("GET", url, true);
 
 				//capture success response
 				http.onreadystatechange = function() {
@@ -229,7 +241,7 @@
 			function getGameInfo() {
 				var http = new XMLHttpRequest();
 				var url = "http://localhost:10001/_getGameInfo/" + uri[4];
-				http.open("GET", url);
+				http.open("GET", url, true);
 
 				//capture success response
 				http.onreadystatechange = function() {
@@ -347,7 +359,6 @@
 
 					updateSessionWinner(currPlayers[0]);
 				}
-
 			}
 
 			function updateSessionWinner(username) {
@@ -355,7 +366,7 @@
 				var http = new XMLHttpRequest();
 				var url = "http://localhost:10001/_updateEndWinningCondition";
 				var params = uri[4] + ";" + username;
-				http.open("GET", url);
+				http.open("POST", url, true);
 
 				//capture success response
 				http.onreadystatechange = function() {
@@ -363,13 +374,14 @@
 						console.log(http.responseText);
 					}
 				}
+
 				http.send(params);
 			};
 
 			function getUsernamePosition() {
 				var http = new XMLHttpRequest();
 				var url = "http://localhost:10001/_getUsernamePosition/" + uri[4] + "/" + uri[3];
-				http.open("GET", url);
+				http.open("GET", url, true);
 
 				//capture success response
 				http.onreadystatechange = function() {
@@ -593,7 +605,7 @@
 							var msg = {"name" : "defeated" , "username" : uri[3]};
 							client.send(mq_queue, {"content-type":"text/plain"}, JSON.stringify(msg));
 
-							removeDefeatedUser(msg.username);
+							removeDefeatedUser(uri[3]);
 							checkWinningCondition();
 						}
 
