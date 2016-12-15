@@ -179,11 +179,10 @@ def routingHandler(pduResult, conn, addr):
 	elif (addr[1] == '_getUsernamePosition'):
 		roomId = addr[2]
 		username = addr[3]
-		content = getGameUsernamePosition(roomId, username)
+		content = json.dumps(getGameUsernamePosition(roomId, username))
 
 		component = (200, content, "text/plain")
 		sendResponse(conn, component)
-
 
 	elif (addr[1] == '_createGame'):
 		username = pduResult.content.strip().split(";")[0]

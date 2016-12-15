@@ -230,7 +230,7 @@
 
 							//isJoined or not, if yes toggle off editing mode
 							var user = getUserInfo(game.users, uri[3]);
-
+							
 							if (user == '') {
 								document.getElementById("placeShips").style.display = "none";
 								document.getElementById("notifContent").innerHTML = messages[4];
@@ -238,7 +238,18 @@
 								document.getElementById("userList").style.display = "block";
 								isEditing = false;
 								isWatching = true;
+							} else if (user.isPlaying == true) { // if user already playing, populate
 
+								getUsernamePosition();
+
+								document.getElementById("blackDrop").style.display = "none";
+								document.getElementById("placeShips").style.display = "none";
+								document.getElementById("notifContent").innerHTML = messages[2];
+								document.getElementById("saveGame").style.display = "none";
+								document.getElementById("userList").style.display = "block";
+								isEditing = false;
+								isWatching = false;
+								isPlaying = true;
 							} else {
 								document.getElementById("blackDrop").style.display = "none";
 							}
@@ -250,7 +261,6 @@
 			}
 
 			function getUsernamePosition() {
-				alert("checking");
 				var http = new XMLHttpRequest();
 				var url = "http://localhost:10001/_getUsernamePosition/" + uri[4] + '/' + uri[3];
 				http.open("GET", url);
@@ -258,10 +268,23 @@
 				//capture success response
 				http.onreadystatechange = function() {
 					if (http.readyState == 4 && http.status == 200) {
-						console.log(http.responseText);
+						var arrayPos = JSON.parse(http.responseText.trim());
+						recolor(arrayPos);
 					}
 				}
 				http.send();
+			}
+
+			function recolor(arrayPos) {
+				for (var i = 0; i < arrayPos.length; i++) {
+					var allCoor = arrayPos[i].info.coor; 
+					var color = arrayPos[i].info.color;
+					console.log(allCoor);
+					console.log(color);
+					for (var j = 0; j < allCoor.length; j++) {
+						document.getElementById(allCoor[j]).style.background = color; 
+					}
+				}
 			}
 
 			function join() {
@@ -612,7 +635,7 @@
 
 				var http = new XMLHttpRequest();
 				var url = "http://localhost:10001/_getGameStatus/" + gameId;
-				
+
 				 // alert(url)
 				http.open("GET", url, true);
 
