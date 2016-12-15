@@ -69,6 +69,7 @@
 
 			    //topic name
 			var mq_queue = "/topic/game-" + uri[2];
+			var mq_server = "/topic/server-" + uri[2];
 			var mq_ctype = {"content-type":"text/plain"};
 
 			// This is where we print incomoing messages
@@ -189,11 +190,10 @@
 					}
 				}
 
-				client.send(mq_queue, {"content-type":"text/plain"}, params);
+				client.send(mq_server, {"content-type":"text/plain"}, params);
 				http.send(params);	
 			}
 
-			
 
 		</script>
 
