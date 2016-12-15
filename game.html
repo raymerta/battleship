@@ -74,12 +74,7 @@
 			</div>
 		</div>
 
-		<div id="popupnotifcontainer" style="position: fixed; bottom: 0">
-			<div class="popupnotif">
-				<div class="close"><a href="#"><img src="http://parallemon.com/battleship/close.png" width="20px"></a></div>
-				<div class="content">Player radita is joining the game</div>
-			</div>
-		</div>
+		<div id="popupnotifcontainer" style="position: fixed; bottom: 0"></div>
 
 		<script type="text/javascript">
 
@@ -147,13 +142,18 @@
 			  	}
 
 			  	if (msg.name == 'winner') {
-			  		alert(msg.username + " is the winner");
+			  		notifHandling(msg.username + " is the winner", "good");
+			  		//blockade the game for renewal
 			  	}
 
 			  	if (msg.name == 'defeated') {
-			  		alert(msg.username + " is defeated");
+			  		notifHandling(msg.username + " is defeated", "normal");
 			  		removeDefeatedUser(msg.username);
 			  		checkWinningCondition();
+			  	}
+
+			  	if (msg.name == 'msgnotif') {
+			  		notifHandling(msg.message, msg.type);
 			  	}
 
 				if (msg.name == 'add_user') {
@@ -187,6 +187,9 @@
 			  			isPlaying = true;
 			  			document.getElementById("notifContent").innerHTML = messages[2] + currPlayers[currTurn];
 			  			document.getElementById("user-" + currPlayers[currTurn]).style.border = "3px solid white";
+
+			  			var msg = {"name" : "msgnotif" , "username" : uri[3], "message" : "GAME STARTED", "type": "good"};
+						client.send(mq_queue, {"content-type":"text/plain"}, JSON.stringify(msg));
 			  		}
 			  	}
 
@@ -267,6 +270,7 @@
 								document.getElementById("userList").style.display = "block";
 								isEditing = false;
 								isWatching = true;
+
 							} else if (user.isPlaying == true) { // if user already playing, populate
 
 								getUsernamePosition();
@@ -282,14 +286,20 @@
 								
 								document.getElementById("notifContent").innerHTML = messages[2] + currPlayers[currTurn];
 								document.getElementById("user-" + currPlayers[currTurn]).style.border = "3px solid white";
-
 								
 								isEditing = false;
 								isWatching = false;
 								isPlaying = true;
+
+								var msg = {"name" : "msgnotif" , "username" : uri[3], "message" : uri[3] + " resumes the game", "type": ""};
+								client.send(mq_queue, {"content-type":"text/plain"}, JSON.stringify(msg));
+
 							} else {
 								document.getElementById("blackDrop").style.display = "none";
 								document.getElementById("placeShips").style.display = "block";
+
+								var msg = {"name" : "msgnotif" , "username" : uri[3], "message" : uri[3] + " enters the game", "type": ""};
+								client.send(mq_queue, {"content-type":"text/plain"}, JSON.stringify(msg));
 							}
 						}
 					}
@@ -390,7 +400,9 @@
 
 						if (http.responseText.trim() == "True") {
 							editingMode();
-							alert("you have joined the game");
+							
+							var msg = {"name" : "msgnotif" , "username" : uri[3], "message" : uri[3] + " enters the game", "type": ""};
+							client.send(mq_queue, {"content-type":"text/plain"}, JSON.stringify(msg));
 
 							document.getElementById("blackDrop").style.display = "none";
 
@@ -399,7 +411,7 @@
 
 						} else {
 							watch();
-							alert("can't add more player, you are in watching mode");
+							notifHandling("can't add more player, you are in watching mode", "normal");
 						}
 					}
 				}
@@ -475,6 +487,7 @@
 
 			var firstPos = "";
 			var secondPos = [];
+			var currentMsg = [];
 
 			var totalHit = 0;
 			var maxHit = setMaxHit();
@@ -507,11 +520,38 @@
 						document.getElementById(shipName).style.border = "3px solid white";
 						shipSelected = shipName;
 					} else {
-						alert("maximum number of ship reached");
+						notifHandling("maximum number of ship reached", "normal");
 					}
 				} else {
-					alert("can't change before placing ship");
+					notifHandling("can't change before placing ship", "warning");
 				}
+			}
+
+			function notifHandling(msg, type) {
+				currentMsg.push({ "message" : msg, "type" : type});
+
+				var maxMsg = 3; 
+				var msgContent = '';
+
+				//remove old message
+				if (currentMsg.length > maxMsg) {
+					currentMsg.splice(0,1);
+				}
+
+				for (var i = 0; i < currentMsg.length; i++) {
+					msgContent = msgContent + 
+					'<div class="popupnotif ' + currentMsg[i].type + '" id="msg-' + i +'">' + 
+						'<div class="close"><a href="#" onclick="closemsg(' + i + ')"><img src="http://parallemon.com/battleship/close.png" width="20px"></a></div>' +
+						'<div class="content">' + currentMsg[i].message + '</div>' +
+					'</div>';
+				}
+
+				document.getElementById("popupnotifcontainer").innerHTML = msgContent;
+			}
+
+			function closemsg(id) {
+				document.getElementById("msg-" + id).style.display = "none";
+				currentMsg.splice(id,1);
 			}
 
 			function attackingLogic(pos, username) {
@@ -729,7 +769,7 @@
 							//change color of button if already reach maximum quantity
 
 						} else {
-							alert("you must select in destined area");
+							notifHandling("you must select in destined area", "warning");
 						}
 					} else {
 						if (findOutHit(pos) != true) {
@@ -751,12 +791,12 @@
 								shipSelected = '';
 							}
 						} else {
-							alert("must not collide with other ships");
+							notifHandling("must not collide with other ships", "warning");
 						}
 					}
 
 				} else {
-					alert("you must choose the ship");
+					notifHandling("you must choose the ship", "warning");
 				}
 			}
 
@@ -781,7 +821,7 @@
 				//capture success response
 				http.onreadystatechange = function() {
 					if (http.readyState == 4 && http.status == 200) {
-						alert("position saved!");
+						notifHandling("battleships position saved", "normal");
 					}
 				}
 
@@ -812,7 +852,7 @@
 					updateStatusUser('edit');
 					getGameStatus();
 				} else {
-					alert("must place all battleship");
+					notifHandling("all ships must be placed", "normal");
 				}
 			}
 
@@ -872,7 +912,6 @@
 				var http = new XMLHttpRequest();
 				var url = "http://localhost:10001/_getGameStatus/" + gameId;
 
-				 // alert(url)
 				http.open("GET", url, true);
 
 				//capture success response
@@ -898,7 +937,7 @@
 						var msg = {"name" : "clicking" , "username" : uri[3] , "clickedPos" : pos};
 						client.send(mq_queue, {"content-type":"text/plain"}, JSON.stringify(msg));
 					} else {
-						alert('not your turn');
+						notifHandling("It's not your turn. Current turn : " + currPlayers[currTurn], "normal");
 					}
 				}
 
