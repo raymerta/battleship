@@ -80,13 +80,26 @@ expected result: can create username, redirected to game session page
 - pick one of the servers
 - insert unique username
 - select 'New Game'
-- Specefiy Number of players/ Game Tile Size and click Sumbit
+- Specefiy Number of players/ Game Tile Size (within the limit) and click Sumbit
 - Select [Buttleship/Cruiser/Destroyer/Submarine] + the position
 - Click Start Game
 
 Expected result: Game started and the position saved.
 
 <<<<<<< 61eed6a157c5d27a50a21a6e2cf5119628c47b2c
+
+## Specify game title size upper than the limit [It redirected to the game without warning message]
+
+- open Chrome browser, type 'http://localhost:10001/'
+- pick one of the servers
+- insert unique username
+- select 'New Game'
+- Specefiy Number of players/ Game Tile Size (within the limit) and click Sumbit
+- Select [Buttleship/Cruiser/Destroyer/Submarine] + the position
+- Click Start Game
+
+Expected result: Show warning message that the number of players or tile size exceeded.
+
 ## select existing game [Done]
 
 - open Chrome browser, type 'http://localhost:10001/'
@@ -164,6 +177,8 @@ Expected reults: - The hitted ship visible to Player 1
 - Back to the game session [http://localhost:10001/game/royal-navy/ahmed/1]
 
 Expected results: all ships are remains when back
+
+
 
 
 ## Special Case
