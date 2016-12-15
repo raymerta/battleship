@@ -422,6 +422,7 @@
 					if (findOutHit(pos) == true) {
 						var inital = document.getElementById(pos).style.background;
 						document.getElementById(pos).style.backgroundImage = "url('http://parallemon.com/battleship/fire-black.png')";
+						sendingHitPosition();
 					} else {
 						document.getElementById(pos).style.background = "linear-gradient(rgba(41, 41, 41, 0.5), rgba(41, 41, 41, 0.5)), url('http://parallemon.com/battleship/seablock.png')";
 					}
@@ -720,6 +721,11 @@
 			function seaPos(pos) {
 				if (isEditing == true) {
 					placementLogic(pos);
+
+					currTurn++;
+					if (currTurn )
+
+					document.getElementById("notifContent").innerHTML = messages[2] + currUsers[currTurn].username;
 				}
 
 				if (isPlaying == true) {
