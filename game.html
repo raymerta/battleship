@@ -13,7 +13,7 @@
 		<div class="skybackground">
 			<img src="http://parallemon.com/battleship/title.png">
 		</div>
-		<div class="notification">
+		<div class="notification" style="text-align: center">
 			<div class="gamecontainer" id="notifContent">you are in editing mode</div>
 		</div>
 		<div class="seabackground">
@@ -157,12 +157,14 @@
 			  		for (var i = 0; i < currUsers.length; i++) {
 			  			if (currUsers[i].username == username) {
 			  				currUsers[i].isPlaying = true;
+			  				currUsers[i].isDefeated = false;
+			  				currUsers[i].isWinning = false;
 			  			}
 			  		}
 			  		
 			  		// game started and set the turn
 			  		if (gameStarted()) {
-			  			isPlaying = true
+			  			isPlaying = true;
 			  			document.getElementById("notifContent").innerHTML = messages[2] + currUsers[currTurn].username;
 			  		}
 			  	}
@@ -249,7 +251,7 @@
 
 								document.getElementById("blackDrop").style.display = "none";
 								document.getElementById("placeShips").style.display = "none";
-								document.getElementById("notifContent").innerHTML = messages[2];
+								document.getElementById("notifContent").innerHTML = messages[2] + currUsers[currTurn].username;
 								document.getElementById("saveGame").style.display = "none";
 								document.getElementById("userList").style.display = "block";
 								isEditing = false;
@@ -263,6 +265,10 @@
 				}
 
 				http.send();
+			}
+
+			function checkWinningCondition() {
+				console.log(currUsers);
 			}
 
 			function getUsernamePosition() {
@@ -340,13 +346,21 @@
 			}
 
 			function getUserInfo(users, username) {
+
+				var rs = '';
+
+				console.log(users);
+
 				for (var i = 0; i < users.length; i++) {
+
 					if (users[i].username == username) {
-						return users[i];
+						rs = users[i];
 					}
 				}
 
-				return '';
+				console.log(currUsers);
+
+				return rs;
 			}
 
 			var shipSelected = '';
@@ -435,10 +449,14 @@
 
 					if (findOutHit(pos) == true) {
 						var inital = document.getElementById(pos).style.background;
+						var initBI = document.getElementById(pos).style.backgroundImage;
 						document.getElementById(pos).style.backgroundImage = "url('http://parallemon.com/battleship/fire-black.png')";
 						sendingHitPosition();
-						totalHit++;
 
+						if (document.getElementById(pos).style.backgroundImage != initBI) {
+							totalHit++;	
+						}
+						
 						//if all boats are sunk, broadcast this message to all users
 						if (totalHit == maxHit) {
 							var msg = {"name" : "defeated" , "username" : uri[3]};
@@ -750,7 +768,7 @@
 				if (isPlaying == true) {
 					console.log("clicking");
 
-					if (currUsers[currTurn] == uri[3]) {
+					if (currUsers[currTurn].username == uri[3]) {
 						var msg = {"name" : "clicking" , "username" : uri[3] , "clickedPos" : pos};
 						client.send(mq_queue, {"content-type":"text/plain"}, JSON.stringify(msg));
 					} else {
