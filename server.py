@@ -157,6 +157,16 @@ def routingHandler(pduResult, conn, addr):
 		component = (200, content, "text/plain")
 		sendResponse(conn, component)
 
+	elif (addr[1] == '_updateHitPosition'):
+		username = pduResult.content.strip().split(";")[0]
+		roomId = pduResult.content.strip().split(";")[1]
+		pos = pduResult.content.strip().split(";")[1]
+
+		content = updateHitPosition(roomId, username, pos)
+
+		component = (200, content, "text/plain")
+		sendResponse(conn, component)
+
 
 	elif (addr[1] == '_updateStatusUser'):
 		username = pduResult.content.strip().split(";")[1]
