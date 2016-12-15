@@ -342,15 +342,20 @@ def findDuplicateName(username, serverId):
 	print >> sys.stderr, 'RETURNING NONE'
 
 def updateEndWinningCondition(username, roomId):
-
+	print >> sys.stderr, "updateEndWinningCondition ENTERED"
 	sessions = json.loads(common.getAllSessions())
+	print >> sys.stderr, "sessions LOADED"
 	for session in sessions:
 		if (int(session['gameRoomId']) == int(roomId)):
+			print >> sys.stderr, "gameRoomId is found to equal roomID"
 			session["isEnded"] = True
+			print >> sys.stderr, "setting 1"
 			session["isPlaying"] = False
+			print >> sys.stderr, "setting 2"
 			for user in session['users']:
 				if (user['username'] == username):
 					user['isWinning'] = True
+					print >> sys.stderr, "evaluation 3"
 
 	sessionData = json.dumps(sessions)
 	fsource = 'sessions.json'
