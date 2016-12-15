@@ -369,6 +369,32 @@ def updateHitPosition(roomId, username, pos):
 
 	#TODO create record to keep map position in where the user getting hit
 
+	fsource = 'hits.json'
+	f = open(fsource, 'r')
+	content = f.read()
+	f.close()
+
+	allPlayersAllHits = []
+
+	if content == '':
+		allPlayersAllHits.append({'username': username, 'gameRoomId': roomId, 'hits': [{{"postion": pos}}]})
+	else:
+		allPlayersAllHits = json.loads(content)
+		playerFiredOnPreviously = False
+		for player in allPlayersAllHits:
+			if player["username"] == username and int(player["gameRoomId"]) == int(roomId):
+				player["hits"].append({"postion": pos})
+				playerFiredOnPreviously = True
+
+		if playerFiredOnPreviously == False:
+			allPlayersAllHits.append({'username': username, 'gameRoomId': roomId, 'hits': [{{"postion": pos}}]})
+
+	hitsData = json.dumps(allPlayersAllHits)
+	fsource = 'hits.json'
+	f = open(fsource, 'w')
+	f.write(sessionData)
+	f.close()
+
 	return True
 
 
