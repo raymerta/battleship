@@ -142,6 +142,29 @@ Expected result: Server creater received a notification informing new player joi
 
 Expected results: - Player 2 can't shoot before Player 1
                   - The serve notify the next one of his turn to shoot
+                  
+                                   
+## Check hit effect
+
+- Game session started
+- Player 1 hit Player's 2 ship
+
+Expected reults: - The hitted ship visible to Player 1
+                 - Player 2 can see his ship attacked, and see who did the attack
+                 
+## Check disconnect and connect the game session
+
+- open Chrome browser, type 'http://localhost:10001/'
+- pick one of the servers
+- insert unique username
+- select a server 
+- Click Join
+- Start playing
+- Close the tab from the browser
+- Back to the game session [http://localhost:10001/game/royal-navy/ahmed/1]
+
+Expected results: all ships are remains when back
+
 
 ## Special Case
 
