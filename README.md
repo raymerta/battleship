@@ -45,13 +45,6 @@ We are copying server part from the first homework + rabbitMQ
 
 expected result: user redirected to insert name page
 
-## Dynamically update server [Need to refresh the page to update the list]
-
-- open Chrome browser, type 'http://localhost:10001/'
-- remove row from the list or add new list
-
-expected result: without refreshing browser, server updated
-
 ## Insert username to server [Done]
 
 - in insert username page, insert new username that never exist before
