@@ -132,6 +132,19 @@ Expected results: Player 3 can join the game and start playing if number of play
 
 Expected result: Server creater received a notification informing new player joined the game session
 
+## Start playing after ensuring all the ships placed [Done]
+
+-  open Chrome browser, type 'http://localhost:10001/'
+- pick one of the servers
+- insert unique username
+- select 'New Game'
+- Specefiy Number of players/ Game Tile Size and click Sumbit
+- Click Start Game
+
+Expected result: show pop-up error message asking to place all the ships
+
+
+
 ## Showing players name within the game session [Done]
 
 - Player 1 open Chrome browser, type 'http://localhost:10001/'
