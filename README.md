@@ -86,6 +86,7 @@ expected result: can create username, redirected to game session page
 
 Expected result: Game started and the position saved.
 
+<<<<<<< 61eed6a157c5d27a50a21a6e2cf5119628c47b2c
 ## select existing game [Done]
 
 - open Chrome browser, type 'http://localhost:10001/'
@@ -111,9 +112,13 @@ Expected result:all ships have to be removed from the game field,
 In case only one player is involved in the game and the others already left, the
 game session should end
 
+## select existing game, game is not running yet, and choose watch
+
+Expected result: got to game page in editing mode
 
 ## select existing game, game is not running yet, and join
 
+Expected result: got to game page in editing mode
 
 
 ## select existing game, game is not running yet, and join but somebody already join
@@ -177,7 +182,7 @@ Expected results: - Player 2 can't shoot before Player 1
 ## nice to have
 
 - [session] dynamic game session name [done]
-- [username] check error when put duplicate name, it requires multiple clicking
+- [username] check error when put duplicate name, it requires multiple clicking 
 - [creategame] limit number of player and tile size
 - [game] change already positioned ship in the game
 - [game] detect ship collision placement

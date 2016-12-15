@@ -65,6 +65,13 @@
 			</div>
 		</div>
 
+		<div id="popupnotifcontainer" style="position: fixed; bottom: 0">
+			<div class="popupnotif">
+				<div class="close"><a href="#"><img src="http://parallemon.com/battleship/close.png" width="20px"></a></div>
+				<div class="content">Player radita is joining the game</div>
+			</div>
+		</div>
+
 		<script type="text/javascript">
 
 			var mapSize = 10;
@@ -143,11 +150,14 @@
 			  		var username = msg.username;
 			  		var status = msg.isPlaying;
 
-			  		var index = currUsers.indexOf(username);
-
-			  		currUsers[index] = { "username" : username, "isPlaying" : true};
+			  		for (var i = 0; i < currUsers.length; i++) {
+			  			if (currUsers[i].username == username) {
+			  				currUsers[i].isPlaying = true;
+			  			}
+			  		}
 			  		
 			  		if (gameStarted()) {
+			  			isPlaying = true
 			  			document.getElementById("notifContent").innerHTML = messages[2] + currUsers[currTurn].username;
 			  		}
 			  	}
@@ -582,6 +592,8 @@
 			}
 
 			function gameStarted() {
+				console.log(currUsers);
+
 				if (currUsers.length == maxPlayers) {
 					for (var i = 0; i < currUsers.length; i++) {
 						if (currUsers[i].isPlaying == false) {

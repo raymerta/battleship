@@ -254,6 +254,26 @@ a:hover .gamebutton{
 	cursor: pointer;
 }
 
+.popupnotif {
+	position: fixed;
+    bottom: 0;
+    background: #f8b823;
+    margin: 20px;
+    padding: 20px;
+    width: 300px;
+    -webkit-border-radius: 20px;
+    line-height: 20px;
+    border-radius: 20px;
+    color: #232323;
+    -webkit-box-shadow: 0 2px 10px 1px #232323;
+    box-shadow: 0 2px 10px 1px #232323;
+}
+
+.popupnotif .close {
+	text-align: right; 
+	margin: -10px;
+}
+
 .gamebutton {
 	-webkit-border-radius: 50px;
 	border-radius: 50px;

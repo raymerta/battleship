@@ -134,7 +134,6 @@ def routingHandler(pduResult, conn, addr):
 		## DELETE LINE BELOW
 		print >> sys.stderr, 'server is starting on %s port %s' % serverAddress
 
-
 		username = pduResult.content.strip().split(";")[0]
 		serverId = pduResult.content.strip().split(";")[1]
 		serverUrl = pduResult.content.strip().split(";")[2]
@@ -148,6 +147,16 @@ def routingHandler(pduResult, conn, addr):
 			content = "Given username is already in use."
 			component = (422, content, "text/plain")
 			sendResponse(conn, component)
+
+	elif (addr[1] == '_updateEndWinningCondition'):
+		username = pduResult.content.strip().split(";")[0]
+		roomId = pduResult.content.strip().split(";")[1]
+
+		content = updateEndWinningCondition(username, roomId)
+
+		component = (200, content, "text/plain")
+		sendResponse(conn, component)
+
 
 	elif (addr[1] == '_updateStatusUser'):
 		username = pduResult.content.strip().split(";")[1]
@@ -268,7 +277,7 @@ def parseRequest(conn):
 	return PDU(data)
 
 def handler(conn, addr):
-	print >> sys.stderr, 'ENTER HandleR'
+	print >> sys.stderr, 'ENTER Handler'
 	# parsing uri request
 	pduResult = parseRequest(conn)
 
@@ -327,6 +336,26 @@ def findDuplicateName(username, serverId):
 		f.close()
 
 		return False
+
+def updateEndWinningCondition(username, roomId):
+
+	#TODO update game session with this room ID, that isEnded is true, isPlaying is False, set username in parameters as winner (is winning true). return true if updated
+
+	return True
+
+def updateHitPosition(roomId, username, pos):
+
+	#TODO create record to keep map position in where the user getting hit
+
+	return True
+
+
+def getHitPosition(roomId): 
+
+	#TODO return all users and position where they got hit
+
+	return True
+
 
 gameRoomName = ['Atlantic Ocean', 'Arctic Ocean', 'Indian Ocean', 'Pacific Ocean', 'Norwegian Sea', 'North Sea', 'Aegean Sea', 'Southern Ocean', 'Arabian Sea', 'East China Sea']
 
