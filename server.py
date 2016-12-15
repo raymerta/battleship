@@ -288,21 +288,22 @@ def handler(conn, addr):
 # ===================================================================
 # game related function here
 # ===================================================================
-
 def findDuplicateName(username, serverId):
-	content = getAllUsers()
+	content = getAllUsers() # all users
 
 	if (content != ""):
 		thereIsADuplicate = False
-		userInfo = json.loads(content)
+		userInfo = json.loads(content) # all users
 		users = []
-		for info in userInfo:
+		for info in userInfo: # for user in all users
 			if (int(info["serverId"]) == int(serverId)):
 				users = info["users"]
 
 		if (users == []):
+
 			newUserAndServer = {"serverId" : serverId, "users": [{"username": username, "userCreated" : int(time.time()) }] }
 			userInfo.append(newUserAndServer)
+
 
 		else:
 			for user in users:
@@ -316,13 +317,15 @@ def findDuplicateName(username, serverId):
 						users.append(newUser)
 
 
-				content = json.dumps(userInfo)
-				fsource = 'users.json'
-				f = open(fsource, 'w')
-				f.write(content)
-				f.close()
+		content = json.dumps(userInfo)
+		fsource = 'users.json'
+		f = open(fsource, 'w')
+		f.write(content)
+		f.close()
 
-				return thereIsADuplicate
+		return thereIsADuplicate
+
+
 
 	else:
 		#empty json file, proceed to create initial content
@@ -335,6 +338,8 @@ def findDuplicateName(username, serverId):
 		f.close()
 
 		return False
+
+	print >> sys.stderr, 'RETURNING NONE'
 
 def updateEndWinningCondition(username, roomId):
 
@@ -349,7 +354,7 @@ def updateHitPosition(roomId, username, pos):
 	return True
 
 
-def getHitPosition(roomId): 
+def getHitPosition(roomId):
 
 	#TODO return all users and position where they got hit
 
