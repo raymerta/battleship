@@ -423,12 +423,11 @@ def getGameStatus(roomId):
 			return False
 
 	print >> sys.stderr, "game is ready"
-	game["isPlaying"] = True
 
 	games = json.loads(common.getAllSessions())
-	for game in games:
-		if (int(game['gameRoomId']) == int(roomId)):
-			game["isPlaying"] = True
+	for g in games:
+		if (int(g['gameRoomId']) == int(roomId)):
+			g["isPlaying"] = True
 
 	gameData = json.dumps(games)
 	fsource = 'game.json'
